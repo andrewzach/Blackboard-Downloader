@@ -18,9 +18,12 @@ namespace BlackboardDownloader
         public List<BbModule> Modules
         {
             get { return modules; }
-            set { modules = value; }
         }
 
+        public void AddModule(BbModule m)
+        {
+            modules.Add(m);
+        }
         public List<string> GetModuleNames()
         {
             List<string> moduleNames = new List<string>();

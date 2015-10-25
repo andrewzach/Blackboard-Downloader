@@ -25,5 +25,26 @@ namespace BlackboardDownloader
             List<HtmlNode> moduleLinks = allLinks.Where(item => item.Attributes["href"].Value.Contains("type=Course")).ToList();
             return moduleLinks;
         }
+
+        public static List<HtmlNode> GetContentLinks(string pageSource)
+        {
+            //List<HtmlNode> allLinks = GetAllLinks(pageSource);
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(pageSource);
+
+            HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//li[contains(@id, 'contentListItem')]//a[@href]");
+            //HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//li//a[@href]");
+            ////div[@class = 'myclass']//a
+            //div[contains(@class, 'known-part')]
+            return contentLinks.ToList();
+        }
+
+        public static HtmlNode GetMainContentLink(string pageSource)
+        {
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(pageSource);
+            HtmlNode contentLink = doc.DocumentNode.SelectSingleNode("//li[contains(@id, 'paletteItem')]//a[contains(@href,'listContent.jsp')]");
+            return contentLink;
+        }
     }
 }

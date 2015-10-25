@@ -8,17 +8,17 @@ namespace BlackboardDownloader
 {
     public class ConsoleUI
     {
-        public static Scraper bbdl;
+        public static Scraper scraper;
         public static void Main(string[] args)
         {
-            bbdl = new Scraper();
+            scraper = new Scraper();
             Console.WriteLine("Welcome to the Webcourses Downloader\n");
             while(!Login())
             {
                 Console.WriteLine("Invalid login. Please try again.\n");
             }
             Console.WriteLine("Login successful!\n");
-            bbdl.PopulateModules();
+            scraper.PopulateAllData();
             DisplayModules();
             Console.ReadLine();
         }
@@ -31,14 +31,14 @@ namespace BlackboardDownloader
             username = Console.ReadLine();
             Console.Write("Password: ");
             password = Console.ReadLine();
-            return bbdl.Login(username, password);
+            return scraper.Login(username, password);
         }
 
         public static void DisplayModules()
         {
             Console.WriteLine("Your Modules");
             Console.WriteLine("---------------------------------");
-            List<string> modules = bbdl.GetModuleNames();
+            List<string> modules = scraper.GetModuleNames();
             for (int i = 0; i < modules.Count; i++)
             {
                 Console.WriteLine((i + 1) + ". " + modules[i]);
