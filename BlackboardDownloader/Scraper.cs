@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Collections.Specialized;
 using System.Net;
 using HtmlAgilityPack;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace BlackboardDownloader
 {
@@ -16,6 +18,7 @@ namespace BlackboardDownloader
         private WebClientEx http;
         public BbData bbData;
         private bool initialized;
+        private string cookieHeader;
 
         public Scraper()
         {
@@ -25,7 +28,7 @@ namespace BlackboardDownloader
 
         public bool Login(string username, string password)
         {
-            string cookieHeader = GetLoginCookieHeader(username, password);
+            cookieHeader = GetLoginCookieHeader(username, password);
             InitWebClient(cookieHeader);
             return true; // TODO: check login success
         }
@@ -98,22 +101,93 @@ namespace BlackboardDownloader
             {
                 CreateMainContentDirectory(m);
             }
-            string pageSource = http.DownloadString(m.Content.Url);
+            PopulateContentDirectory(m.Content);
+        }
+
+        // Used recursively to populate all subfolders.
+        public void PopulateContentDirectory(BbContentDirectory folder)
+        {
+            string pageSource = http.DownloadString(folder.Url);
             List<HtmlNode> contentLinks = HTMLParser.GetContentLinks(pageSource);
-            if(contentLinks != null)
-            {
-                CreateMainContentDirectory(m);
-            }
             foreach (HtmlNode link in contentLinks)
             {
-                Console.WriteLine("Adding " + m.Name + ": " + link.InnerText);
-                m.Content.AddFile(new BbContentItem(link.InnerText, link.Attributes["href"].Value));
+                Console.WriteLine("Adding " + folder.Name + ": " + link.InnerText);
+                string linkString = PORTAL + link.Attributes["href"].Value;
+                if (HTMLParser.IsSubFolder(link))
+                {
+                    BbContentDirectory subFolder = new BbContentDirectory(link.InnerText, linkString);
+                    folder.AddSubFolder(subFolder);
+                    PopulateContentDirectory(subFolder);
+                }
+                else
+                {
+                    folder.AddFile(new BbContentItem(link.InnerText, linkString));
+                }
             }
-            //Console.WriteLine(pageSource);
         }
+
+        public void DownloadModuleFiles(BbModule m)
+        {
+            DownloadFolder(m.Content, @"D:\Code\Output\" + CleanDirectory(m.Name) + "\\");
+        }
+        // Downloads all files in folders. Used recursively for subfolders.
+        public void DownloadFolder(BbContentDirectory folder, string directory)
+        {
+            foreach(BbContentItem file in folder.Files)
+            {
+                DownloadFile(file, directory);
+            }
+            foreach(BbContentDirectory subFolder in folder.SubFolders)
+            {
+                DownloadFolder(subFolder, directory + CleanDirectory(subFolder.Name) + "\\");
+            }
+        }
+        public void DownloadFile(BbContentItem file, string directory)
+        {
+            try
+            {
+                Console.WriteLine("Downloading file " + directory + file.Name);
+                Directory.CreateDirectory(directory); //Create directory if it doesn't exist already
+                DetectFileName(file);
+                http.DownloadFile(file.Url, directory + file.Filename);
+            }
+            catch (WebException e)
+            {
+                Console.WriteLine("ERROR: Cannot download file " + file.Name);
+            }
+        }
+
         public List<string> GetModuleNames()
         {
             return bbData.GetModuleNames();
+        }
+
+        public void DetectFileName(BbContentItem file)
+        {
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(file.Url);
+                request.AllowAutoRedirect = false;
+                request.Headers.Add("Cookie", cookieHeader);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Uri fileURL = new Uri(response.Headers["Location"]);
+                string filename = Path.GetFileName(fileURL.LocalPath);
+                file.Filename = filename;
+            }
+            catch (System.ArgumentNullException e)
+            {
+                Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - No location header");
+            }
+            catch (WebException e)
+            {
+                Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - WebException");
+            }
+        }
+        
+        public static string CleanDirectory(string directory)
+        {
+            char[] illegalChars = { '<', '>', ':', '"', '/', '\\', '|', '?', '*' };
+            return illegalChars.Aggregate(directory, (current, c) => current.Replace(c.ToString(), string.Empty)).Truncate(20);
         }
     }
 }

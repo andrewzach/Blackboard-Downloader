@@ -46,5 +46,11 @@ namespace BlackboardDownloader
             HtmlNode contentLink = doc.DocumentNode.SelectSingleNode("//li[contains(@id, 'paletteItem')]//a[contains(@href,'listContent.jsp')]");
             return contentLink;
         }
+
+        public static bool IsSubFolder(HtmlNode link)
+        {
+            if (link.Attributes["href"].Value.Contains("listContent.jsp")) { return true; }
+            else { return false; }
+        }
     }
 }

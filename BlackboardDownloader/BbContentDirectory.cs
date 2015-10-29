@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,9 +34,24 @@ namespace BlackboardDownloader
             set { url = value; }
         }
 
-        public void AddFile(BbContentItem newFile)
+        public List<BbContentItem> Files
         {
-            files.Add(newFile);
+            get { return files; }
+        }
+
+        public List<BbContentDirectory> SubFolders
+        {
+            get { return subFolders; }
+        }
+
+        public void AddFile(BbContentItem f)
+        {
+            files.Add(f);
+        }
+
+        public void AddSubFolder(BbContentDirectory s)
+        {
+            subFolders.Add(s);
         }
 
     }

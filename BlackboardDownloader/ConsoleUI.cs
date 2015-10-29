@@ -18,8 +18,11 @@ namespace BlackboardDownloader
                 Console.WriteLine("Invalid login. Please try again.\n");
             }
             Console.WriteLine("Login successful!\n");
+            Console.WriteLine("Populating content data from webcourses. Please wait...");
             scraper.PopulateAllData();
+            Console.WriteLine("Content population complete\n");
             DisplayModules();
+            scraper.DownloadModuleFiles(scraper.bbData.Modules[2]);
             Console.ReadLine();
         }
 
