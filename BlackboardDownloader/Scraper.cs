@@ -126,8 +126,9 @@ namespace BlackboardDownloader
             }
         }
 
-        public void DownloadModuleFiles(BbModule m)
+        public void DownloadModuleFiles(string moduleName)
         {
+            BbModule m = bbData.GetModuleByName(moduleName);
             DownloadFolder(m.Content, @"D:\Code\Output\" + CleanDirectory(m.Name) + "\\");
         }
         // Downloads all files in folders. Used recursively for subfolders.
@@ -187,7 +188,7 @@ namespace BlackboardDownloader
         public static string CleanDirectory(string directory)
         {
             char[] illegalChars = { '<', '>', ':', '"', '/', '\\', '|', '?', '*' };
-            return illegalChars.Aggregate(directory, (current, c) => current.Replace(c.ToString(), string.Empty)).Truncate(20);
+            return illegalChars.Aggregate(directory, (current, c) => current.Replace(c.ToString(), string.Empty)).Truncate(30);
         }
     }
 }

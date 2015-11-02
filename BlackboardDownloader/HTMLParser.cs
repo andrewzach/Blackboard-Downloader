@@ -31,8 +31,8 @@ namespace BlackboardDownloader
             //List<HtmlNode> allLinks = GetAllLinks(pageSource);
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
-
-            HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//li[contains(@id, 'contentListItem')]//a[@href]");
+            //not(starts-with(@href, 'http://domain.com/download.php'))
+            HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//li[contains(@id, 'contentListItem')]//a[not(contains(@href,'uploadAssignment?'))]");
             //HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//li//a[@href]");
             ////div[@class = 'myclass']//a
             //div[contains(@class, 'known-part')]
