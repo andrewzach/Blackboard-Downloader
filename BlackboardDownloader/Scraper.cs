@@ -16,6 +16,7 @@ namespace BlackboardDownloader
         public static string PORTAL = "https://dit-bb.blackboard.com";
         public static string MODID = "_25_1";
         private WebClientEx http;
+        private string outputDirectory = @"C:\Output\";
         public BbData bbData;
         private bool initialized;
         private string cookieHeader;
@@ -26,6 +27,11 @@ namespace BlackboardDownloader
             initialized = false;
         }
 
+        public string OutputDirectory
+        {
+            get { return outputDirectory; }
+            set { outputDirectory = value; }
+        }
         public bool Login(string username, string password)
         {
             cookieHeader = GetLoginCookieHeader(username, password);
@@ -129,7 +135,7 @@ namespace BlackboardDownloader
         public void DownloadModuleFiles(string moduleName)
         {
             BbModule m = bbData.GetModuleByName(moduleName);
-            DownloadFolder(m.Content, @"D:\Code\Output\" + CleanDirectory(m.Name) + "\\");
+            DownloadFolder(m.Content, outputDirectory + CleanDirectory(m.Name) + "\\");
         }
         // Downloads all files in folders. Used recursively for subfolders.
         public void DownloadFolder(BbContentDirectory folder, string directory)

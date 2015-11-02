@@ -13,14 +13,25 @@ namespace BlackboardDownloader
         {
             scraper = new Scraper();
             Console.WriteLine("Welcome to the Webcourses Downloader\n");
+
+            //Login
             while(!Login())
             {
                 Console.WriteLine("Invalid login. Please try again.\n");
             }
             Console.WriteLine("Login successful!\n");
+
+            //Populate Content
             Console.WriteLine("Populating content data from webcourses. Please wait...");
             scraper.PopulateAllData();
             Console.WriteLine("Content population complete\n");
+
+            //Choose output directory
+            Console.Write("Enter desired output directory: ");
+            string output = Console.ReadLine();
+            scraper.OutputDirectory = output;
+
+            //Download module files
             string again = "Y";
             while (again.ToUpper() == "Y")
             {
@@ -28,10 +39,6 @@ namespace BlackboardDownloader
                 Console.Write("Again? [Y/N]: ");
                 again = Console.ReadLine();
             }
-            DownloadModules();
-            DownloadModules();
-            //scraper.DownloadModuleFiles(scraper.bbData.Modules[2]);
-            //scraper.DownloadModuleFiles(scraper.bbData.Modules[3]);
             Console.ReadLine();
         }
 
