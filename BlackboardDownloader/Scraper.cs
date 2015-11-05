@@ -17,13 +17,13 @@ namespace BlackboardDownloader
         public static string MODID = "_25_1";
         private WebClientEx http;
         private string outputDirectory = @"C:\Output\";
-        private BbData data;
+        private BbData webData;
         private bool initialized;
         private string cookieHeader;
 
         public Scraper()
         {
-            data = new BbData();
+            webData = new BbData();
             initialized = false;
         }
 
@@ -32,11 +32,26 @@ namespace BlackboardDownloader
             get { return outputDirectory; }
             set { outputDirectory = value; }    //TODO: Test directory is valid by creating folder
         }
+
+        public List<string> GetModuleNames()
+        {
+            return webData.GetModuleNames();
+        }
+
+
+        // ### LOGIN AND SETUP ###
         public bool Login(string username, string password)
         {
             cookieHeader = GetLoginCookieHeader(username, password);
-            InitWebClient(cookieHeader);
-            return true; // TODO: check login success
+            if (cookieHeader == null)
+            {
+                return false;
+            }
+            else
+            { 
+                InitWebClient(cookieHeader);
+                return true; 
+            }
         }
         private void InitWebClient(string cookieHeader)
         {
@@ -51,7 +66,7 @@ namespace BlackboardDownloader
             string formUrl = PORTAL +"/webapps/login/"; 
             string formParams = string.Format("user_id={0}&password={1}&login=Login&action=login&newloc=", username, password);
             string cookieHeader;
-            WebRequest req = WebRequest.Create(formUrl);
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(formUrl);
             req.ContentType = "application/x-www-form-urlencoded";
             req.Method = "POST";
             byte[] bytes = Encoding.ASCII.GetBytes(formParams);
@@ -60,20 +75,29 @@ namespace BlackboardDownloader
             {
                 os.Write(bytes, 0, bytes.Length);
             }
-            WebResponse resp = req.GetResponse();
-            cookieHeader = resp.Headers["Set-cookie"];
+            using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
+            {
+                cookieHeader = resp.Headers["Set-cookie"];
+                if (resp.ContentLength == -1)    // Login invalid
+                {
+                    cookieHeader = null;
+                }
+            }
             return cookieHeader;
         }
 
+
+    // ### POPULATING CONTENT ###
         public void PopulateAllData()
         {
             PopulateModules();
-            foreach(BbModule m in data.Modules)
+            foreach(BbModule m in webData.Modules)
             {
                 PopulateModuleContent(m);
             }
         }
 
+        // Create BbModule objects for each module found and add them to webData
         public void PopulateModules()
         {
             NameValueCollection reqParams = new NameValueCollection();
@@ -90,17 +114,11 @@ namespace BlackboardDownloader
                 string linkString = PORTAL + link.Attributes["href"].Value;
                 linkString = linkString.Replace(" ", string.Empty);     // Some Blackboard Hrefs have spaces. Strip them.
                 //string trueLink = RedirectURL(linkString);              // Determine the real URL of the module after redirect
-                data.AddModule(new BbModule(link.InnerHtml, linkString));
+                webData.AddModule(new BbModule(link.InnerHtml, linkString));
             }
         }
 
-        public void CreateMainContentDirectory(BbModule m)
-        {
-            string pageSource = http.DownloadString(m.Url);
-            HtmlNode mainContentLink = HTMLParser.GetMainContentLink(pageSource);
-            string linkString = PORTAL + mainContentLink.Attributes["href"].Value;
-            m.InitContentDirectory(linkString);
-        }
+        // Searches for content within module m and adding it.
         public void PopulateModuleContent(BbModule m)
         {
             if(!m.Initialized)
@@ -110,7 +128,7 @@ namespace BlackboardDownloader
             PopulateContentDirectory(m.Content);
         }
 
-        // Used recursively to populate all subfolders.
+        // Used recursively to populate all subfolders of a module
         public void PopulateContentDirectory(BbContentDirectory folder)
         {
             string pageSource = http.DownloadString(folder.Url);
@@ -118,26 +136,47 @@ namespace BlackboardDownloader
             foreach (HtmlNode link in contentLinks)
             {
                 Console.WriteLine("Adding " + folder.Name + ": " + link.InnerText);
-                string linkString = PORTAL + link.Attributes["href"].Value;
-                if (HTMLParser.IsSubFolder(link))
+                string linkString;
+                if (link.Attributes["href"].Value.StartsWith("http"))   
+                {
+                    linkString = link.Attributes["href"].Value;     // if external link, take as given
+                }
+                else
+                {
+                    linkString = PORTAL + link.Attributes["href"].Value; // if local link, add http blackboard portal in front
+                }
+                if (HTMLParser.IsSubFolder(link))   // content is a subfolder
                 {
                     BbContentDirectory subFolder = new BbContentDirectory(link.InnerText, linkString);
                     folder.AddSubFolder(subFolder);
                     PopulateContentDirectory(subFolder);
                 }
-                else
+                else        // content is a file
                 {
                     folder.AddFile(new BbContentItem(link.InnerText, linkString));
                 }
             }
         }
 
+        // Finds and adds the main content directory to module m. 
+        public void CreateMainContentDirectory(BbModule m)
+        {
+            string pageSource = http.DownloadString(m.Url);
+            HtmlNode mainContentLink = HTMLParser.GetMainContentLink(pageSource);
+            string linkString = PORTAL + mainContentLink.Attributes["href"].Value;
+            m.InitContentDirectory(linkString);
+        }
+
+
+    // ### DOWNLOADING CONTENT ###
+
+        // Downloads all files in a module
         public void DownloadModuleFiles(string moduleName)
         {
-            BbModule m = data.GetModuleByName(moduleName);
-            DownloadFolder(m.Content, outputDirectory + CleanDirectory(m.Name) + "\\");
+            BbModule m = webData.GetModuleByName(moduleName);
+            DownloadFolder(m.Content, outputDirectory + BbUtils.CleanDirectory(m.Name) + "\\");
         }
-        // Downloads all files in folders. Used recursively for subfolders.
+        // Downloads all files in folders. Used recursively for each subfolder found.
         public void DownloadFolder(BbContentDirectory folder, string directory)
         {
             foreach(BbContentItem file in folder.Files)
@@ -146,9 +185,11 @@ namespace BlackboardDownloader
             }
             foreach(BbContentDirectory subFolder in folder.SubFolders)
             {
-                DownloadFolder(subFolder, directory + CleanDirectory(subFolder.Name) + "\\");
+                DownloadFolder(subFolder, directory + BbUtils.CleanDirectory(subFolder.Name) + "\\");   //Add subfolder name to directory
             }
         }
+
+        // Downloads a BbContentItem file and saves it to directory.
         public void DownloadFile(BbContentItem file, string directory)
         {
             try
@@ -164,11 +205,7 @@ namespace BlackboardDownloader
             }
         }
 
-        public List<string> GetModuleNames()
-        {
-            return data.GetModuleNames();
-        }
-
+        // Determines filename 
         public void DetectFileName(BbContentItem file)
         {
             try
@@ -176,10 +213,12 @@ namespace BlackboardDownloader
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(file.Url);
                 request.AllowAutoRedirect = false;
                 request.Headers.Add("Cookie", cookieHeader);
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Uri fileURL = new Uri(response.Headers["Location"]);
-                string filename = Path.GetFileName(fileURL.LocalPath);
-                file.Filename = filename;
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                { 
+                    Uri fileURL = new Uri(response.Headers["Location"]);
+                    string filename = Path.GetFileName(fileURL.LocalPath);
+                    file.Filename = filename;
+                }
             }
             catch (System.ArgumentNullException e)
             {
@@ -189,12 +228,6 @@ namespace BlackboardDownloader
             {
                 Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - WebException");
             }
-        }
-        
-        public static string CleanDirectory(string directory)
-        {
-            char[] illegalChars = { '<', '>', ':', '"', '/', '\\', '|', '?', '*' };
-            return illegalChars.Aggregate(directory, (current, c) => current.Replace(c.ToString(), string.Empty)).Truncate(30);
         }
     }
 }

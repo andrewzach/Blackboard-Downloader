@@ -39,6 +39,7 @@ namespace BlackboardDownloader
                 Console.Write("Again? [Y/N]: ");
                 again = Console.ReadLine();
             }
+            Console.WriteLine("Goodbye");
             Console.ReadLine();
         }
 
