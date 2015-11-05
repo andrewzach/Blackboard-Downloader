@@ -18,7 +18,7 @@ namespace BlackboardDownloader
         {
             this.name = name;
             this.url = url;
-            filename = CleanFileName(name).Truncate(20);
+            filename = BbUtils.CleanFileName(name).Truncate(20);
         }
 
         public string Name
@@ -40,19 +40,9 @@ namespace BlackboardDownloader
         }
 
         //not my code. Need a better place to put this function.
-        private string CleanFileName(string fileName)
-        {
-            return Path.GetInvalidFileNameChars().Aggregate(fileName, (current, c) => current.Replace(c.ToString(), string.Empty));
-        }
+
     }
 
     //not my code. Need a better place to put this class.
-    public static class StringExt
-    {
-        public static string Truncate(this string value, int maxLength)
-        {
-            if (string.IsNullOrEmpty(value)) return value;
-            return value.Length <= maxLength ? value : value.Substring(0, maxLength);
-        }
-    }
+
 }

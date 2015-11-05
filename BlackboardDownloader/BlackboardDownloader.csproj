@@ -82,6 +82,7 @@
     <Compile Include="BbContentItem.cs" />
     <Compile Include="BbData.cs" />
     <Compile Include="BbModule.cs" />
+    <Compile Include="BbUtils.cs" />
     <Compile Include="ConsoleUI.cs" />
     <Compile Include="HTMLParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -119,21 +120,12 @@
        Other similar extension points exist, see Microsoft.Common.targets. 
   <Target Name="BeforeBuild">
   </Target> -->
-<!-- ILRepack -->
-<Target Name="AfterBuild" Condition="'$(Configuration)' == 'Release'">
-
-   <ItemGroup>
-    <InputAssemblies Include="$(OutputPath)\$(AssemblyName).exe" />
-    <InputAssemblies Include="$(OutputPath)\HtmlAgilityPack.dll" />
-   </ItemGroup>
-
-   <ILRepack 
-    Parallel="true"
-    Internalize="true"
-    InputAssemblies="@(InputAssemblies)"
-    TargetKind="EXE"
-    OutputFile="$(OutputPath)\$(AssemblyName).exe"
-   />
-</Target>
-
+  <!-- ILRepack -->
+  <Target Name="AfterBuild" Condition="'$(Configuration)' == 'Release'">
+    <ItemGroup>
+      <InputAssemblies Include="$(OutputPath)\$(AssemblyName).exe" />
+      <InputAssemblies Include="$(OutputPath)\HtmlAgilityPack.dll" />
+    </ItemGroup>
+    <ILRepack Parallel="true" Internalize="true" InputAssemblies="@(InputAssemblies)" TargetKind="EXE" OutputFile="$(OutputPath)\$(AssemblyName).exe" />
+  </Target>
 </Project>
