@@ -17,20 +17,20 @@ namespace BlackboardDownloader
         public static string MODID = "_25_1";
         private WebClientEx http;
         private string outputDirectory = @"C:\Output\";
-        public BbData bbData;
+        private BbData data;
         private bool initialized;
         private string cookieHeader;
 
         public Scraper()
         {
-            bbData = new BbData();
+            data = new BbData();
             initialized = false;
         }
 
         public string OutputDirectory
         {
             get { return outputDirectory; }
-            set { outputDirectory = value; }
+            set { outputDirectory = value; }    //TODO: Test directory is valid by creating folder
         }
         public bool Login(string username, string password)
         {
@@ -68,7 +68,7 @@ namespace BlackboardDownloader
         public void PopulateAllData()
         {
             PopulateModules();
-            foreach(BbModule m in bbData.Modules)
+            foreach(BbModule m in data.Modules)
             {
                 PopulateModuleContent(m);
             }
@@ -90,7 +90,7 @@ namespace BlackboardDownloader
                 string linkString = PORTAL + link.Attributes["href"].Value;
                 linkString = linkString.Replace(" ", string.Empty);     // Some Blackboard Hrefs have spaces. Strip them.
                 //string trueLink = RedirectURL(linkString);              // Determine the real URL of the module after redirect
-                bbData.AddModule(new BbModule(link.InnerHtml, linkString));
+                data.AddModule(new BbModule(link.InnerHtml, linkString));
             }
         }
 
@@ -134,7 +134,7 @@ namespace BlackboardDownloader
 
         public void DownloadModuleFiles(string moduleName)
         {
-            BbModule m = bbData.GetModuleByName(moduleName);
+            BbModule m = data.GetModuleByName(moduleName);
             DownloadFolder(m.Content, outputDirectory + CleanDirectory(m.Name) + "\\");
         }
         // Downloads all files in folders. Used recursively for subfolders.
@@ -166,7 +166,7 @@ namespace BlackboardDownloader
 
         public List<string> GetModuleNames()
         {
-            return bbData.GetModuleNames();
+            return data.GetModuleNames();
         }
 
         public void DetectFileName(BbContentItem file)
