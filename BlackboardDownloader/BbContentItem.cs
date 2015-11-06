@@ -10,11 +10,11 @@ namespace BlackboardDownloader
     public class BbContentItem
     {
         private string name;
-        private string url;
+        private Uri url;
         private string filename;
         private string fileType;
 
-        public BbContentItem(string name, string url)
+        public BbContentItem(string name, Uri url)
         {
             this.name = name;
             this.url = url;
@@ -27,7 +27,7 @@ namespace BlackboardDownloader
             set { name = value; }
         }
 
-        public string Url
+        public Uri Url
         {
             get { return url; }
             set { url = value; }

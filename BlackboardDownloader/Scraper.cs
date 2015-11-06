@@ -111,10 +111,11 @@ namespace BlackboardDownloader
             foreach (HtmlNode link in moduleLinks)
             {
                 //Console.WriteLine("Adding module " + link.InnerHtml);
-                string linkString = PORTAL + link.Attributes["href"].Value;
-                linkString = linkString.Replace(" ", string.Empty);     // Some Blackboard Hrefs have spaces. Strip them.
+                Uri moduleURL = new Uri(new Uri(PORTAL), link.Attributes["href"].Value);
+                //string linkString = PORTAL + link.Attributes["href"].Value;
+                //linkString = linkString.Replace(" ", string.Empty);     // Some Blackboard Hrefs have spaces. Strip them.
                 //string trueLink = RedirectURL(linkString);              // Determine the real URL of the module after redirect
-                webData.AddModule(new BbModule(link.InnerHtml, linkString));
+                webData.AddModule(new BbModule(link.InnerHtml, moduleURL));
             }
         }
 
@@ -131,29 +132,21 @@ namespace BlackboardDownloader
         // Used recursively to populate all subfolders of a module
         public void PopulateContentDirectory(BbContentDirectory folder)
         {
-            string pageSource = http.DownloadString(folder.Url);
+            string pageSource = http.DownloadString(folder.Url.AbsoluteUri);
             List<HtmlNode> contentLinks = HTMLParser.GetContentLinks(pageSource);
             foreach (HtmlNode link in contentLinks)
             {
                 Console.WriteLine("Adding " + folder.Name + ": " + link.InnerText);
-                string linkString;
-                if (link.Attributes["href"].Value.StartsWith("http"))   
-                {
-                    linkString = link.Attributes["href"].Value;     // if external link, take as given
-                }
-                else
-                {
-                    linkString = PORTAL + link.Attributes["href"].Value; // if local link, add http blackboard portal in front
-                }
+                Uri linkURL = new Uri(folder.Url, link.Attributes["href"].Value);
                 if (HTMLParser.IsSubFolder(link))   // content is a subfolder
                 {
-                    BbContentDirectory subFolder = new BbContentDirectory(link.InnerText, linkString);
+                    BbContentDirectory subFolder = new BbContentDirectory(link.InnerText, linkURL);
                     folder.AddSubFolder(subFolder);
                     PopulateContentDirectory(subFolder);
                 }
                 else        // content is a file
                 {
-                    folder.AddFile(new BbContentItem(link.InnerText, linkString));
+                    folder.AddFile(new BbContentItem(link.InnerText, linkURL));
                 }
             }
         }
@@ -161,10 +154,10 @@ namespace BlackboardDownloader
         // Finds and adds the main content directory to module m. 
         public void CreateMainContentDirectory(BbModule m)
         {
-            string pageSource = http.DownloadString(m.Url);
+            string pageSource = http.DownloadString(m.Url.AbsoluteUri);
             HtmlNode mainContentLink = HTMLParser.GetMainContentLink(pageSource);
-            string linkString = PORTAL + mainContentLink.Attributes["href"].Value;
-            m.InitContentDirectory(linkString);
+            Uri linkURL = new Uri(new Uri(PORTAL), mainContentLink.Attributes["href"].Value);
+            m.InitContentDirectory(linkURL);
         }
 
 
@@ -197,7 +190,7 @@ namespace BlackboardDownloader
                 Console.WriteLine("Downloading file " + directory + file.Name);
                 Directory.CreateDirectory(directory); //Create directory if it doesn't exist already
                 DetectFileName(file);
-                http.DownloadFile(file.Url, directory + file.Filename);
+                http.DownloadFile(file.Url.AbsoluteUri, directory + file.Filename);
             }
             catch (WebException e)
             {

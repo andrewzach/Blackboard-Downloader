@@ -9,17 +9,17 @@ namespace BlackboardDownloader
     public class BbModule
     {
         private string name;
-        private string url;
+        private Uri url;
         private bool initialized;
         private BbContentDirectory content;
 
-        public BbModule(string name, string url)
+        public BbModule(string name, Uri url)
         {
             this.name = name;
             this.url = url;
             initialized = false;
         }
-        public void InitContentDirectory(string url)
+        public void InitContentDirectory(Uri url)
         {
             content = new BbContentDirectory(name + " Content", url);
             initialized = true;
@@ -29,7 +29,7 @@ namespace BlackboardDownloader
             get { return name; }
             set { name = value; }
         }
-        public string Url {
+        public Uri Url {
             get { return url; }
             set { url = value; }
         }
