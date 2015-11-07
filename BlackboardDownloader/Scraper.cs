@@ -136,7 +136,8 @@ namespace BlackboardDownloader
             List<HtmlNode> contentLinks = HTMLParser.GetContentLinks(pageSource);
             foreach (HtmlNode link in contentLinks)
             {
-                Console.WriteLine("Adding " + folder.Name + ": " + link.InnerText);
+                //Console.WriteLine("Adding " + folder.Name + ": " + link.InnerText);
+                Console.Write(".");
                 Uri linkURL = new Uri(folder.Url, link.Attributes["href"].Value);
                 if (HTMLParser.IsSubFolder(link))   // content is a subfolder
                 {

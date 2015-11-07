@@ -8,14 +8,42 @@ namespace BlackboardDownloader
 {
     public class ConsoleUI
     {
+        public static Dictionary<char, string> menuOptions;
         public static Scraper scraper;
+
         public static void Main(string[] args)
         {
-            scraper = new Scraper();
-            Console.WriteLine("Welcome to the Webcourses Downloader\n");
 
+            DisplayWelcome();
+            Initialize();
+            menuOptions = new Dictionary<char, string>
+            {
+                { 'D', "Download Content" },
+                { 'V', "View Content" },
+                { 'O', "Change Output Direcctory" }
+            };
+            DisplayMenu();
+            char choice = GetMenuChoice();
+            while (choice != 'Q')
+            {
+                switch(choice)
+                {
+                    case 'D': DownloadContent(); break;
+                    case 'V': ViewContent(); break;
+                    case 'O': ChangeOutputDir(); break;
+                }
+                DisplayMenu();
+                choice = GetMenuChoice();
+            }
+            Console.WriteLine("Goodbye");
+            Console.ReadLine();
+        }
+
+        public static void Initialize()
+        {
+            scraper = new Scraper();
             //Login
-            while(!Login())
+            while (!Login())
             {
                 Console.WriteLine("Invalid login. Please try again.\n");
             }
@@ -24,23 +52,57 @@ namespace BlackboardDownloader
             //Populate Content
             Console.WriteLine("Populating content data from webcourses. Please wait...");
             scraper.PopulateAllData();
-            Console.WriteLine("Content population complete\n");
+            Console.WriteLine("\nContent population complete\n");
+            Console.WriteLine("Modules found: ");
+            DisplayModules(scraper.GetModuleNames());
+            Console.WriteLine();
+        }
 
-            //Choose output directory
-            Console.Write("Enter desired output directory: ");
-            string output = Console.ReadLine();
-            scraper.OutputDirectory = output;
+        public static void DisplayWelcome()
+        {
+            Console.WriteLine("###############################################");
+            Console.WriteLine("######### Blackboard Downloader v 0.1 #########");
+            Console.WriteLine("############# By Andrew Zacharias #############");
+            Console.WriteLine("###############################################");
+            Console.WriteLine();
+        }
 
-            //Download module files
-            string again = "Y";
-            while (again.ToUpper() == "Y")
+        public static void DisplayMenu()
+        {
+            Console.WriteLine();
+            Console.WriteLine("--------- MAIN MENU ---------");
+            foreach (var option in menuOptions)
             {
-                DownloadModules();
-                Console.Write("Again? [Y/N]: ");
-                again = Console.ReadLine();
+                Console.WriteLine(option.Key + ". " + option.Value);
             }
-            Console.WriteLine("Goodbye");
-            Console.ReadLine();
+        }
+
+        public static char GetMenuChoice()
+        {
+            char choice;
+            Console.Write(">> ");
+            choice = Console.ReadLine().ToUpper()[0];     // Take first char of input string as selected choice
+            while (!menuOptions.ContainsKey(choice))
+            {
+                Console.WriteLine("Invalid input. Try again.");
+                Console.Write(">> ");
+                choice = Console.ReadLine().ToUpper()[0];
+            }
+            return choice;
+        }
+
+        public static void ViewContent()
+        {
+            Console.WriteLine("Option still in development. Come back later...");
+        }
+
+        public static void ChangeOutputDir()
+        {
+            //Choose output directory
+            Console.WriteLine("\nCurrent output directory: " + scraper.OutputDirectory);
+            Console.Write("Enter desired output directory: ");
+            string output = Console.ReadLine();     // TODO: Verify valid output directory
+            scraper.OutputDirectory = output;
         }
 
         public static bool Login()
@@ -54,10 +116,10 @@ namespace BlackboardDownloader
             return scraper.Login(username, password);
         }
 
-        public static void DownloadModules()
+        public static void DownloadContent()
         {
             List<string> modules = scraper.GetModuleNames();
-            Console.WriteLine("Enter the number of the module you'd like to download content for.");
+            Console.WriteLine("\nEnter the number of the module you'd like to download content for.");
             Console.WriteLine("Your Modules");
             Console.WriteLine("---------------------------------");
             DisplayModules(modules);
