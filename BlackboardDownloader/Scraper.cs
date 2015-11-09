@@ -30,7 +30,18 @@ namespace BlackboardDownloader
         public string OutputDirectory
         {
             get { return outputDirectory; }
-            set { outputDirectory = value; }    //TODO: Test directory is valid by creating folder
+            set
+            {
+                try
+                {
+                    Directory.CreateDirectory(value);
+                    outputDirectory = value;
+                }
+                catch (DirectoryNotFoundException e)
+                {
+                    Console.WriteLine("Invalid input, could not create directory.");
+                }
+            } 
         }
 
         public List<string> GetModuleNames()
@@ -122,6 +133,7 @@ namespace BlackboardDownloader
         // Searches for content within module m and adding it.
         public void PopulateModuleContent(BbModule m)
         {
+            Console.Write("\nPopulating content for " + m.Name);
             if(!m.Initialized)
             {
                 CreateMainContentDirectory(m);
@@ -147,7 +159,8 @@ namespace BlackboardDownloader
                 }
                 else        // content is a file
                 {
-                    folder.AddFile(new BbContentItem(link.InnerText, linkURL));
+                    string linkType = HTMLParser.GetLinkType(linkURL);
+                    folder.AddFile(new BbContentItem(link.InnerText, linkURL, linkType));
                 }
             }
         }
@@ -188,14 +201,14 @@ namespace BlackboardDownloader
         {
             try
             {
-                Console.WriteLine("Downloading file " + directory + file.Name);
+                Console.WriteLine("Downloading file (" + file.LinkType +"): " +  directory + file.Name);
                 Directory.CreateDirectory(directory); //Create directory if it doesn't exist already
                 DetectFileName(file);
                 http.DownloadFile(file.Url.AbsoluteUri, directory + file.Filename);
             }
             catch (WebException e)
             {
-                Console.WriteLine("ERROR: Cannot download file " + file.Name);
+                Console.WriteLine("ERROR: Cannot download file " + file.Name + " from " + file.Url.AbsoluteUri);
             }
         }
 

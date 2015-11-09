@@ -12,13 +12,13 @@ namespace BlackboardDownloader
         private string name;
         private Uri url;
         private string filename;
-        private string location;
+        private string linkType;
 
-        public BbContentItem(string name, Uri url, string location="blackboard")
+        public BbContentItem(string name, Uri url, string linkType="blackboard")
         {
             this.name = name;
             this.url = url;
-            this.location = location;
+            this.linkType = linkType;
             filename = BbUtils.CleanFileName(name).Truncate(20);
         }
 
@@ -40,10 +40,10 @@ namespace BlackboardDownloader
             set { filename = value; }
         }
 
-        //not my code. Need a better place to put this function.
-
+        public string LinkType
+        {
+            get { return linkType; }
+            set { linkType = value; }
+        }
     }
-
-    //not my code. Need a better place to put this class.
-
 }

@@ -20,7 +20,8 @@ namespace BlackboardDownloader
             {
                 { 'D', "Download Content" },
                 { 'V', "View Content" },
-                { 'O', "Change Output Direcctory" }
+                { 'O', "Change Output Direcctory" },
+                { 'Q', "Quit" }
             };
             DisplayMenu();
             char choice = GetMenuChoice();

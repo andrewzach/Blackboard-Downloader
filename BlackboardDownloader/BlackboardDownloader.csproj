@@ -77,7 +77,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BbContent.cs" />
     <Compile Include="BbContentDirectory.cs" />
     <Compile Include="BbContentItem.cs" />
     <Compile Include="BbData.cs" />

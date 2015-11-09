@@ -52,5 +52,35 @@ namespace BlackboardDownloader
             if (link.Attributes["href"].Value.Contains("listContent.jsp")) { return true; }
             else { return false; }
         }
+
+        public static string GetLinkType(Uri linkURL)
+        {
+            string linkType;
+            if (linkURL.AbsoluteUri.StartsWith("https://dit-bb") || linkURL.AbsoluteUri.StartsWith("http://dit-bb"))
+            {
+                linkType = "local";
+            }
+            else if (linkURL.AbsoluteUri.StartsWith("http://1drv.ms") || linkURL.AbsoluteUri.Contains("onedrive.live.com"))
+            {
+                linkType = "onedrive";
+            }
+            else if (linkURL.AbsoluteUri.Contains("dropbox.com"))
+            {
+                linkType = "dropbox";
+            }
+            else if (linkURL.AbsoluteUri.Contains("docs.google.com"))
+            {
+                linkType = "googledocs";
+            }
+            else if (linkURL.AbsoluteUri.Contains("drive.google.com"))
+            {
+                linkType = "googledrive";
+            }
+            else
+            {
+                linkType = "website";   //Default to website
+            }
+            return linkType;
+        }
     }
 }
