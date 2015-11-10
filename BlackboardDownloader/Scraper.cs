@@ -202,6 +202,10 @@ namespace BlackboardDownloader
             try
             {
                 Console.WriteLine("Downloading file (" + file.LinkType +"): " +  directory + file.Name);
+                if (file.LinkType == "onedrive")
+                {
+                    file.Url = OneDriveURL(file.Url);
+                }
                 Directory.CreateDirectory(directory); //Create directory if it doesn't exist already
                 DetectFileName(file);
                 http.DownloadFile(file.Url.AbsoluteUri, directory + file.Filename);
@@ -210,6 +214,21 @@ namespace BlackboardDownloader
             {
                 Console.WriteLine("ERROR: Cannot download file " + file.Name + " from " + file.Url.AbsoluteUri);
             }
+        }
+
+        public Uri OneDriveURL(Uri link)
+        {
+            Uri oneDriveURL;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(link);
+            request.AllowAutoRedirect = false;
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                StringBuilder location = new StringBuilder(response.Headers["Location"]);
+                location.Replace("redir?", "download?");    // replace redir with download to get direct download link
+                //Console.WriteLine("One drive dl: " + location.ToString());
+                oneDriveURL = new Uri(location.ToString());
+            }
+            return oneDriveURL;
         }
 
         // Determines filename 
