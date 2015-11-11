@@ -64,6 +64,8 @@ namespace BlackboardDownloader
                 return true; 
             }
         }
+
+        // instantiate http web client with cookie header from login
         private void InitWebClient(string cookieHeader)
         {
             CookieContainer cookieJar = new CookieContainer();
@@ -71,6 +73,7 @@ namespace BlackboardDownloader
             http = new WebClientEx(cookieJar);
             initialized = true;
         }
+
         // Log in to webcourses with username and password, returns the Set-cookie header string
         private string GetLoginCookieHeader(string username, string password)
         {
@@ -101,7 +104,7 @@ namespace BlackboardDownloader
     // ### POPULATING CONTENT ###
         public void PopulateAllData()
         {
-            PopulateModules();
+            PopulateModules();  // scrapes list of modules available
             foreach(BbModule m in webData.Modules)
             {
                 PopulateModuleContent(m);
@@ -119,13 +122,10 @@ namespace BlackboardDownloader
             byte[] pageSourceBytes = http.UploadValues(PORTAL + "/webapps/portal/execute/tabs/tabAction", "POST", reqParams);
             string pageSource = Encoding.UTF8.GetString(pageSourceBytes);
             List<HtmlNode> moduleLinks = HTMLParser.GetModuleLinks(pageSource);
-            foreach (HtmlNode link in moduleLinks)
+            foreach (HtmlNode link in moduleLinks)  
             {
-                //Console.WriteLine("Adding module " + link.InnerHtml);
+                // for each module link found, create and add a new module
                 Uri moduleURL = new Uri(new Uri(PORTAL), link.Attributes["href"].Value);
-                //string linkString = PORTAL + link.Attributes["href"].Value;
-                //linkString = linkString.Replace(" ", string.Empty);     // Some Blackboard Hrefs have spaces. Strip them.
-                //string trueLink = RedirectURL(linkString);              // Determine the real URL of the module after redirect
                 webData.AddModule(new BbModule(link.InnerHtml, moduleURL));
             }
         }
@@ -157,11 +157,58 @@ namespace BlackboardDownloader
                     folder.AddSubFolder(subFolder);
                     PopulateContentDirectory(subFolder);
                 }
+                else if (HTMLParser.IsLearningUnit(link)) //content is a learning unit
+                {
+                    BbContentDirectory subFolder = new BbContentDirectory(link.InnerText, linkURL);
+                    folder.AddSubFolder(subFolder);
+                    PopulateLearningUnit(subFolder);
+                }
                 else        // content is a file
                 {
                     string linkType = HTMLParser.GetLinkType(linkURL);
                     folder.AddFile(new BbContentItem(link.InnerText, linkURL, linkType));
                 }
+            }
+        }
+
+        // Populates content in a learning unit, which is like a folder but with a tree-like navigation
+        // and content is generally displayed in iframes to the right. 
+        public void PopulateLearningUnit(BbContentDirectory folder)
+        {
+            string pageSource = http.DownloadString(folder.Url.AbsoluteUri);
+            // Get the link to the next content item in a learning unit by following the next arrow link
+            // until there are no more left. 
+            HtmlNode nextLink = HTMLParser.GetNextLearningUnitContent(pageSource);
+            int iframeCounter = 1;  // Used to name files for iframes
+            while (nextLink != null)
+            {
+                Console.Write("-");
+//              Uri testUri = new Uri(nextLink.Attributes["href"].Value, UriKind.Relative);
+                Uri nextURL = new Uri(folder.Url, nextLink.Attributes["href"].Value);
+                string contentSource = http.DownloadString(nextURL);
+                List<HtmlNode> contentLinks = HTMLParser.GetLearningUnitContent(contentSource);
+                if (contentLinks != null)
+                {
+                    // for each content link found, add a file. Usually only one
+                    foreach (HtmlNode clink in contentLinks)
+                    {
+                        Uri contentURL = new Uri(folder.Url, clink.Attributes["href"].Value);
+                        string linkType = HTMLParser.GetLinkType(contentURL);
+                        folder.AddFile(new BbContentItem(clink.InnerText, contentURL, linkType));
+                    }
+                }
+                else // if no content links found, look for content source in iFrame
+                {
+                    string clink = HTMLParser.GetLearningUnitIFrame(contentSource);
+                    if (clink != null)  // if iframe found
+                    {
+                        Uri contentURL = new Uri(folder.Url, new Uri(clink));
+                        string linkType = HTMLParser.GetLinkType(contentURL);
+                        folder.AddFile(new BbContentItem(folder.Name + " iframe" + iframeCounter, contentURL, linkType));
+                        iframeCounter++;
+                    }
+                }
+                nextLink = HTMLParser.GetNextLearningUnitContent(contentSource);
             }
         }
 
@@ -206,6 +253,10 @@ namespace BlackboardDownloader
                 {
                     file.Url = OneDriveURL(file.Url);
                 }
+                else if  (file.LinkType == "email")
+                {
+                    return; // Don't try to download e-mail addresses
+                }
                 Directory.CreateDirectory(directory); //Create directory if it doesn't exist already
                 DetectFileName(file);
                 http.DownloadFile(file.Url.AbsoluteUri, directory + file.Filename);
@@ -219,14 +270,23 @@ namespace BlackboardDownloader
         public Uri OneDriveURL(Uri link)
         {
             Uri oneDriveURL;
+            string urlString;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(link);
             request.AllowAutoRedirect = false;
             using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
             {
-                StringBuilder location = new StringBuilder(response.Headers["Location"]);
-                location.Replace("redir?", "download?");    // replace redir with download to get direct download link
-                //Console.WriteLine("One drive dl: " + location.ToString());
-                oneDriveURL = new Uri(location.ToString());
+                if (response.Headers["Location"] != null)
+                {
+                    urlString = response.Headers["Location"];
+                }
+                else
+                {
+                    urlString = link.AbsoluteUri;
+                }
+                StringBuilder newURL = new StringBuilder(urlString);
+                newURL.Replace("redir?", "download?");    // replace redir with download to get direct download link
+                newURL.Replace("embed?", "download?");
+                oneDriveURL = new Uri(newURL.ToString());
             }
             return oneDriveURL;
         }
@@ -253,6 +313,10 @@ namespace BlackboardDownloader
             catch (WebException e)
             {
                 Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - WebException");
+            }
+            catch (NotSupportedException e)
+            {
+                Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - URL format issue");
             }
         }
     }
