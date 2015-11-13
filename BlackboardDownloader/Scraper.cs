@@ -8,6 +8,7 @@ using System.Net;
 using HtmlAgilityPack;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace BlackboardDownloader
 {
@@ -16,14 +17,17 @@ namespace BlackboardDownloader
         public static string PORTAL = "https://dit-bb.blackboard.com";
         public static string MODID = "_25_1";
         private WebClientEx http;
-        private string outputDirectory = @"C:\Output\";
+        private string outputDirectory;
         private BbData webData;
         private bool initialized;
         private string cookieHeader;
+        private Logger log;
 
         public Scraper()
         {
             webData = new BbData();
+            log = new Logger("##### Blackboard Downloader Starting #####");
+            outputDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\BBDL-Output\\";
             initialized = false;
         }
 
@@ -187,7 +191,6 @@ namespace BlackboardDownloader
             while (nextLink != null)
             {
                 Console.Write("-");
-//              Uri testUri = new Uri(nextLink.Attributes["href"].Value, UriKind.Relative);
                 Uri nextURL = new Uri(folder.Url, nextLink.Attributes["href"].Value);
                 string contentSource = http.DownloadString(nextURL);
                 List<HtmlNode> contentLinks = HTMLParser.GetLearningUnitContent(contentSource);
@@ -203,10 +206,10 @@ namespace BlackboardDownloader
                 }
                 else // if no content links found, look for content source in iFrame
                 {
-                    string clink = HTMLParser.GetLearningUnitIFrame(contentSource);
-                    if (clink != null)  // if iframe found
+                    string iFrameLink = HTMLParser.GetLearningUnitIFrame(contentSource);
+                    if (iFrameLink != null)  // if iframe found
                     {
-                        Uri contentURL = new Uri(folder.Url, new Uri(clink));
+                        Uri contentURL = new Uri(folder.Url, iFrameLink);
                         string linkType = HTMLParser.GetLinkType(contentURL);
                         folder.AddFile(new BbContentItem(folder.Name + " iframe" + iframeCounter, contentURL, linkType));
                         iframeCounter++;
@@ -232,6 +235,8 @@ namespace BlackboardDownloader
         public void DownloadModuleFiles(string moduleName)
         {
             BbModule m = webData.GetModuleByName(moduleName);
+            Console.WriteLine("Downloading files for module " + m.Name);
+            Console.WriteLine("Output directory = " + outputDirectory);
             DownloadFolder(m.Content, outputDirectory + BbUtils.CleanDirectory(m.Name) + "\\");
         }
         // Downloads all files in folders. Used recursively for each subfolder found.
@@ -250,24 +255,35 @@ namespace BlackboardDownloader
         // Downloads a BbContentItem file and saves it to directory.
         public void DownloadFile(BbContentItem file, string directory)
         {
+            string shortDir = directory.Substring(outputDirectory.Length, directory.Length - outputDirectory.Length);
             try
             {
-                Console.WriteLine("Downloading file (" + file.LinkType +"): " +  directory + file.Name);
                 if (file.LinkType == "onedrive")
                 {
                     file.Url = OneDriveURL(file.Url);
                 }
+                else if (file.LinkType == "website")
+                {
+                    log.Write("Not attempting to download from unknown website " + file.Url.AbsoluteUri);
+                    Console.WriteLine("Unknown website: Not downloading file " + shortDir + file.Name);
+                    Console.WriteLine("URL = " + file.Url.AbsoluteUri);
+                    return;
+                }
                 else if  (file.LinkType == "email")
                 {
-                    return; // Don't try to download e-mail addresses
+                    return; // Don't try to download e-mail
                 }
+                Console.WriteLine("Downloading file (" + file.LinkType + "): " + shortDir + file.Name);
                 Directory.CreateDirectory(directory); //Create directory if it doesn't exist already
                 DetectFileName(file);
                 http.DownloadFile(file.Url.AbsoluteUri, directory + file.Filename);
             }
             catch (WebException e)
             {
-                Console.WriteLine("ERROR: Cannot download file " + file.Name + " from " + file.Url.AbsoluteUri);
+                log.WriteException(e);
+                log.Write("ERROR: Cannot download file " + file);
+                log.Write(shortDir);
+                Console.WriteLine("ERROR: Cannot download file " + file);
             }
         }
 
@@ -299,29 +315,44 @@ namespace BlackboardDownloader
         // Determines filename 
         public void DetectFileName(BbContentItem file)
         {
-            try
+            if (file.LinkType == "directlink")  // if direct link to file, get filename from path
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(file.Url);
-                request.AllowAutoRedirect = false;
-                request.Headers.Add("Cookie", cookieHeader);
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                { 
-                    Uri fileURL = new Uri(response.Headers["Location"]);
-                    string filename = Path.GetFileName(fileURL.LocalPath);
-                    file.Filename = filename;
+                string filename = Path.GetFileName(file.Url.AbsoluteUri);
+                file.Filename = filename;
+            }
+            else
+            {
+                try
+                {
+                    // Sends a request to file URL and inspects Location header of response for filename 
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(file.Url);
+                    request.AllowAutoRedirect = false;
+                    request.Headers.Add("Cookie", cookieHeader);
+                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                    {
+                        Uri fileURL = new Uri(response.Headers["Location"]);
+                        string filename = Path.GetFileName(fileURL.LocalPath);
+                        file.Filename = filename;
+                    }
                 }
-            }
-            catch (System.ArgumentNullException e)
-            {
-                Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - No location header");
-            }
-            catch (WebException e)
-            {
-                Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - WebException");
-            }
-            catch (NotSupportedException e)
-            {
-                Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - URL format issue");
+                catch (System.ArgumentNullException e)
+                {
+                    log.Write("ERROR: Could not detect filename for " + file);
+                    log.WriteException(e);
+                    Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - No location header");
+                }
+                catch (WebException e)
+                {
+                    log.Write("ERROR: Could not detect filename for " + file);
+                    log.WriteException(e);
+                    Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - WebException");
+                }
+                catch (NotSupportedException e)
+                {
+                    log.Write("ERROR: Could not detect filename for " + file);
+                    log.WriteException(e);
+                    Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - URL format issue");
+                }
             }
         }
     }

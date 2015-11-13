@@ -17,9 +17,9 @@ namespace BlackboardDownloader
             Initialize();
             menuOptions = new Dictionary<char, string>
             {
-                { 'D', "Download Content" },
-                { 'V', "View Content" },
-                { 'O', "Change Output Direcctory" },
+                { '1', "Download Content" },
+                { '2', "View Content" },
+                { '3', "Change Output Direcctory" },
                 { 'Q', "Quit" }
             };
             DisplayMenu();
@@ -28,9 +28,9 @@ namespace BlackboardDownloader
             {
                 switch(choice)
                 {
-                    case 'D': DownloadContent(); break;
-                    case 'V': ViewContent(); break;
-                    case 'O': ChangeOutputDir(); break;
+                    case '1': DownloadContent(); break;
+                    case '2': ViewContent(); break;
+                    case '3': ChangeOutputDir(); break;
                 }
                 DisplayMenu();
                 choice = GetMenuChoice();

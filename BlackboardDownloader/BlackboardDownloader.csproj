@@ -52,10 +52,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>9F9707FB9CE331F3F0FF232404CE6078B44E510C</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>C7283C88B50AC089024455570FB5D26750D26EC8</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>BlackboardDownloader_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>BlackboardDownloader_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="BlackboardDownloader_1_TemporaryKey.pfx" />
     <None Include="BlackboardDownloader_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>

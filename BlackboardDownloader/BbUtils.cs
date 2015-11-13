@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace BlackboardDownloader
 {
@@ -29,6 +30,37 @@ namespace BlackboardDownloader
         {
             if (string.IsNullOrEmpty(value)) return value;
             return value.Length <= maxLength ? value : value.Substring(0, maxLength);
+        }
+    }
+
+    public class Logger
+    {
+        private string exePath;
+
+        public Logger(string initMessage)
+        {
+            exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            Write(initMessage);
+        }
+
+        public void Write(string message)
+        {
+            try
+            {
+                using (TextWriter tw = File.AppendText(exePath + "\\" + "BlackboardDownloader-log.txt"))
+                {
+                    tw.WriteLine(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + message);
+                }
+            }
+            catch (FileNotFoundException e)
+            {
+                Console.WriteLine("Logging error. File not found.");
+            }
+        }
+
+        public void WriteException(Exception e)
+        {
+            Write(e.GetType() + ": " + e.Message);
         }
     }
 }

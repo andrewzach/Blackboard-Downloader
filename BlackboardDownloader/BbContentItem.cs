@@ -45,5 +45,11 @@ namespace BlackboardDownloader
             get { return linkType; }
             set { linkType = value; }
         }
+
+        public override string ToString()
+        {
+            return "Name[" + name + "] Filename[" + filename + "] Type[" + linkType + "]" +
+                Environment.NewLine + "URL[" + url.AbsoluteUri + "]";
+        }
     }
 }

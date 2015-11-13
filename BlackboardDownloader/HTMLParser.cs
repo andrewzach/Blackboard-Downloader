@@ -122,6 +122,13 @@ namespace BlackboardDownloader
             {
                 linkType = "email";
             }
+            else if (linkURL.AbsoluteUri.EndsWith(".pdf") || 
+                linkURL.AbsoluteUri.EndsWith(".docx") || 
+                linkURL.AbsoluteUri.EndsWith(".pptx"))
+            {
+                linkType = "directlink";
+            }
+
             else
             {
                 linkType = "website";   //Default to website
