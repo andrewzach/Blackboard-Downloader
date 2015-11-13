@@ -12,8 +12,7 @@ namespace BlackboardDownloader
         public static Scraper scraper;
 
         public static void Main(string[] args)
-        {
-
+        { 
             DisplayWelcome();
             Initialize();
             menuOptions = new Dictionary<char, string>

@@ -28,14 +28,9 @@ namespace BlackboardDownloader
 
         public static List<HtmlNode> GetContentLinks(string pageSource)
         {
-            //List<HtmlNode> allLinks = GetAllLinks(pageSource);
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
-            //not(starts-with(@href, 'http://domain.com/download.php'))
             HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//li[contains(@id, 'contentListItem')]//a[not(contains(@href,'uploadAssignment?'))]");
-            //HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//li//a[@href]");
-            ////div[@class = 'myclass']//a
-            //div[contains(@class, 'known-part')]
             return contentLinks.ToList();
         }
 
@@ -58,7 +53,6 @@ namespace BlackboardDownloader
 
         public static List<HtmlNode> GetLearningUnitContent(string pageSource)
         {
-            //arrow_next_li.gif
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
             HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//div[@class='vtbegenerated']//a[@href]");

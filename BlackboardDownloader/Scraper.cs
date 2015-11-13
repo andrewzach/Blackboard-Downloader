@@ -34,6 +34,10 @@ namespace BlackboardDownloader
             {
                 try
                 {
+                    if (!value.EndsWith("\\"))
+                    {
+                        value = value + "\\";   // add \ if directory doesn't end with one
+                    }
                     Directory.CreateDirectory(value);
                     outputDirectory = value;
                 }
@@ -267,6 +271,7 @@ namespace BlackboardDownloader
             }
         }
 
+        // Returns a URL to direct download a OneDrive file
         public Uri OneDriveURL(Uri link)
         {
             Uri oneDriveURL;
