@@ -14,12 +14,12 @@ namespace BlackboardDownloader
         private string filename;
         private string linkType;
 
-        public BbContentItem(string name, Uri url, string linkType="blackboard")
+        public BbContentItem(string name, Uri url, string linkType="local")
         {
             this.name = name;
             this.url = url;
             this.linkType = linkType;
-            filename = BbUtils.CleanFileName(name).Truncate(20);
+            filename = BbUtils.CleanFileName(name).Truncate(40);
         }
 
         public string Name

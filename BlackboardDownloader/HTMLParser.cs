@@ -38,7 +38,6 @@ namespace BlackboardDownloader
         {
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
-            //HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//a[contains(@class,'tocItem')]");
             HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//a[contains(@href,'displayLearningUnit')]");
             return contentLinks.ToList();
         }

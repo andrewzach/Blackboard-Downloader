@@ -264,9 +264,9 @@ namespace BlackboardDownloader
                 }
                 else if (file.LinkType == "website")
                 {
-                    log.Write("Not attempting to download from unknown website " + file.Url.AbsoluteUri);
-                    Console.WriteLine("Unknown website: Not downloading file " + shortDir + file.Name);
-                    Console.WriteLine("URL = " + file.Url.AbsoluteUri);
+                    log.Write("Linking to website " + file.Url.AbsoluteUri);
+                    Console.WriteLine("Creating shortcut: " + shortDir + file.Name + "\n\tURL = " + file.Url.AbsoluteUri);
+                    CreateUrlShortcut(file, directory);
                     return;
                 }
                 else if  (file.LinkType == "email")
@@ -287,6 +287,15 @@ namespace BlackboardDownloader
             }
         }
 
+        public void CreateUrlShortcut(BbContentItem file, string directory)
+        {
+            Directory.CreateDirectory(directory);
+            using (StreamWriter w = new StreamWriter(directory + "\\" + file.Filename + ".url"))
+            {
+                w.WriteLine("[InternetShortcut]");
+                w.WriteLine("URL=" + file.Url.AbsoluteUri);
+            }
+        }
         // Returns a URL to direct download a OneDrive file
         public Uri OneDriveURL(Uri link)
         {
