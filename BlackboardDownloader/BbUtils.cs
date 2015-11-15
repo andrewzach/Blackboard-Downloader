@@ -36,10 +36,12 @@ namespace BlackboardDownloader
     public class Logger
     {
         private string exePath;
+        private string filename;
 
-        public Logger(string initMessage)
+        public Logger(string initMessage, string filename)
         {
             exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            this.filename = filename;
             Write(initMessage);
         }
 
@@ -47,7 +49,7 @@ namespace BlackboardDownloader
         {
             try
             {
-                using (TextWriter tw = File.AppendText(exePath + "\\" + "BlackboardDownloader-log.txt"))
+                using (TextWriter tw = File.AppendText(exePath + "\\" + filename))
                 {
                     tw.WriteLine(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ": " + message);
                 }

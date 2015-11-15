@@ -55,8 +55,11 @@ namespace BlackboardDownloader
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
             HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//div[@class='vtbegenerated']//a[@href]");
-            if (contentLinks != null) { return contentLinks.ToList(); }
-            else { return null; }
+            HtmlNodeCollection contentLinks2 = doc.DocumentNode.SelectNodes("//span[@class='fnt3']//a[@href]");
+            List<HtmlNode> allLinks = new List<HtmlNode>();
+            if (contentLinks != null) { allLinks.AddRange(contentLinks.ToList()); }
+            if (contentLinks2 != null) { allLinks.AddRange(contentLinks2.ToList()); }
+            return allLinks;
         }
 
         public static string GetLearningUnitIFrame(string pageSource)
@@ -68,10 +71,7 @@ namespace BlackboardDownloader
             {
                 return iframe.Attributes["src"].Value;
             }
-            else
-            {
-                return null;
-            }
+            else { return null; }
         }
 
         public static HtmlNode GetMainContentLink(string pageSource)
@@ -80,6 +80,14 @@ namespace BlackboardDownloader
             doc.LoadHtml(pageSource);
             HtmlNode contentLink = doc.DocumentNode.SelectSingleNode("//li[contains(@id, 'paletteItem')]//a[contains(@href,'listContent.jsp')]");
             return contentLink;
+        }
+
+        public static string GetPageTitle(string pageSource)
+        {
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(pageSource);
+            HtmlNode title = doc.DocumentNode.SelectSingleNode("//title");
+            return title.InnerText;
         }
 
         public static bool IsSubFolder(HtmlNode link)
@@ -133,6 +141,21 @@ namespace BlackboardDownloader
                 linkType = "website";   //Default to website
             }
             return linkType;
+        }
+
+        // Attempts to get inner text of a link. For badly formed HTML, may have to look in next sibling node.
+        public static string GetLinkText(HtmlNode link)
+        {
+            string linkText = link.InnerText;
+            if (string.IsNullOrWhiteSpace(linkText))
+            {
+                linkText = link.NextSibling.InnerText;
+                if (string.IsNullOrWhiteSpace(linkText))
+                {
+                    linkText = "DefaultText";
+                }
+            }
+            return linkText;
         }
     }
 }

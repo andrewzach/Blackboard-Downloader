@@ -26,7 +26,7 @@ namespace BlackboardDownloader
         public Scraper()
         {
             webData = new BbData();
-            log = new Logger("##### Blackboard Downloader Starting #####");
+            log = new Logger("##### Blackboard Downloader Starting #####", "BlackboardDownloader-log.txt");
             outputDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\BBDL-Output\\";
             initialized = false;
         }
@@ -186,36 +186,36 @@ namespace BlackboardDownloader
             string pageSource = http.DownloadString(folder.Url.AbsoluteUri);
             // Get the link to the next content item in a learning unit by following the next arrow link
             // until there are no more left. 
-            HtmlNode nextLink = HTMLParser.GetNextLearningUnitContent(pageSource);
-            int iframeCounter = 1;  // Used to name files for iframes
-            while (nextLink != null)
+            Uri nextURL = folder.Url;
+            HtmlNode nextLink;
+            while (nextURL != null)
             {
-                Console.Write("-");
-                Uri nextURL = new Uri(folder.Url, nextLink.Attributes["href"].Value);
+                Console.Write(",");
                 string contentSource = http.DownloadString(nextURL);
                 List<HtmlNode> contentLinks = HTMLParser.GetLearningUnitContent(contentSource);
-                if (contentLinks != null)
+                // for each content link found, add a file. Usually only one
+                foreach (HtmlNode link in contentLinks)
                 {
-                    // for each content link found, add a file. Usually only one
-                    foreach (HtmlNode clink in contentLinks)
-                    {
-                        Uri contentURL = new Uri(folder.Url, clink.Attributes["href"].Value);
-                        string linkType = HTMLParser.GetLinkType(contentURL);
-                        folder.AddFile(new BbContentItem(clink.InnerText, contentURL, linkType));
-                    }
+                    Uri contentURL = new Uri(folder.Url, link.Attributes["href"].Value);
+                    string linkType = HTMLParser.GetLinkType(contentURL);
+                    string linkName = HTMLParser.GetLinkText(link);
+                    if (linkName == "DefaultText") { linkName = HTMLParser.GetPageTitle(contentSource); }
+                    folder.AddFile(new BbContentItem(linkName, contentURL, linkType));
                 }
-                else // if no content links found, look for content source in iFrame
+                if (contentLinks.Count == 0) // if no content links found, look for content source in iFrame
                 {
                     string iFrameLink = HTMLParser.GetLearningUnitIFrame(contentSource);
                     if (iFrameLink != null)  // if iframe found
                     {
                         Uri contentURL = new Uri(folder.Url, iFrameLink);
                         string linkType = HTMLParser.GetLinkType(contentURL);
-                        folder.AddFile(new BbContentItem(folder.Name + " iframe" + iframeCounter, contentURL, linkType));
-                        iframeCounter++;
+                        string linkName = HTMLParser.GetPageTitle(contentSource);
+                        folder.AddFile(new BbContentItem(linkName, contentURL, linkType));
                     }
                 }
                 nextLink = HTMLParser.GetNextLearningUnitContent(contentSource);
+                if (nextLink == null) { nextURL = null; }
+                else { nextURL = new Uri(folder.Url, nextLink.Attributes["href"].Value); }
             }
         }
 
@@ -313,6 +313,7 @@ namespace BlackboardDownloader
                 {
                     urlString = link.AbsoluteUri;
                 }
+                //TODO: Check for OneDrive folder
                 StringBuilder newURL = new StringBuilder(urlString);
                 newURL.Replace("redir?", "download?");    // replace redir with download to get direct download link
                 newURL.Replace("embed?", "download?");
