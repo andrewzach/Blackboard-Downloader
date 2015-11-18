@@ -21,7 +21,7 @@ namespace BlackboardDownloader
         }
         public void InitContentDirectory(Uri url)
         {
-            content = new BbContentDirectory(name + " Content", url);
+            content = new BbContentDirectory(name + " Content", url, null);
             initialized = true;
         }
         public string Name

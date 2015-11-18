@@ -11,13 +11,15 @@ namespace BlackboardDownloader
     {
         private List<BbContentDirectory> subFolders;
         private List<BbContentItem> files;
+        private BbContentDirectory folder;
         private Uri url;
         private string name;
 
-        public BbContentDirectory(string name, Uri url)
+        public BbContentDirectory(string name, Uri url, BbContentDirectory folder)
         {
             this.url = url;
             this.name = name;
+            this.folder = folder;
             subFolders = new List<BbContentDirectory>();
             files = new List<BbContentItem>();
         }
@@ -42,6 +44,12 @@ namespace BlackboardDownloader
         public List<BbContentDirectory> SubFolders
         {
             get { return subFolders; }
+        }
+
+        public BbContentDirectory Folder
+        {
+            get { return folder; }
+            set { folder = value; }
         }
 
         public void AddFile(BbContentItem f)

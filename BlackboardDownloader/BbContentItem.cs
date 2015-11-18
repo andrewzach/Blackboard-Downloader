@@ -13,12 +13,14 @@ namespace BlackboardDownloader
         private Uri url;
         private string filename;
         private string linkType;
+        private BbContentDirectory folder;
 
-        public BbContentItem(string name, Uri url, string linkType="local")
+        public BbContentItem(string name, Uri url, BbContentDirectory folder, string linkType="local")
         {
             this.name = name;
             this.url = url;
             this.linkType = linkType;
+            this.folder = folder;
             filename = BbUtils.CleanFileName(name).Truncate(40);
         }
 
@@ -44,6 +46,12 @@ namespace BlackboardDownloader
         {
             get { return linkType; }
             set { linkType = value; }
+        }
+
+        public BbContentDirectory Folder
+        {
+            get { return folder; }
+            set { folder = value; }
         }
 
         public override string ToString()

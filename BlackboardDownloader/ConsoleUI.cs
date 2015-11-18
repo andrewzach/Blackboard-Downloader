@@ -93,7 +93,89 @@ namespace BlackboardDownloader
 
         public static void ViewContent()
         {
-            Console.WriteLine("Option still in development. Come back later...");
+            List<string> modules = scraper.GetModuleNames();
+            Console.WriteLine("\nEnter the number of the module you'd like to view content for.");
+            Console.WriteLine("Your Modules");
+            Console.WriteLine("---------------------------------");
+            DisplayModules(modules);
+            Console.WriteLine("-1. Quit");
+            Console.Write(">>");
+            int choice = GetModuleChoice(modules);
+            if (choice == -1)
+            {
+                return;
+            }
+            ViewDirectory(scraper.GetModuleByName(modules[choice]).Content);
+        }
+
+        public static void ViewDirectory(BbContentDirectory folder)
+        {
+            Console.WriteLine();
+            Console.WriteLine("VIEWING DIRECTORY: " + folder.Name);
+            Console.WriteLine("------------------------------------------------------------------");
+            for (int i = 0; i < folder.SubFolders.Count; i++)
+            {
+                Console.WriteLine(i + 1 + ". Directory: " + folder.SubFolders[i].Name);
+            }
+            for (int i = 0; i < folder.Files.Count; i++)
+            {
+                Console.WriteLine(i + 1 + folder.SubFolders.Count + ". File: " + folder.Files[i].Name);
+            }
+            Console.WriteLine("0.  Back");
+            Console.WriteLine("-1. Quit");
+            Console.Write(">> ");
+            int choice = GetViewChoice(folder);
+
+            if (choice == -1) { return; }
+            else if (choice == 0)
+            {
+                if (folder.Folder != null)
+                {
+                    ViewDirectory(folder.Folder);
+                }
+                else
+                {
+                    ViewContent();
+                }
+            }
+            else if (choice <= folder.SubFolders.Count)
+            {
+                 ViewDirectory(folder.SubFolders[choice-1]);
+            }
+            else
+            {
+                ViewFile(folder.Files[choice - folder.SubFolders.Count - 1]);
+            }
+        }
+
+        public static void ViewFile(BbContentItem file)
+        {
+            Console.WriteLine();
+            Console.WriteLine("VIEWING FILE " + file.Name);
+            Console.WriteLine("------------------------------------------------------------------");
+            Console.WriteLine(file);
+            Console.WriteLine("------------------------------------------------------------------");
+            Console.WriteLine();
+            Console.Write("Download? [Y/N]: ");
+            string choice = Console.ReadLine();
+            if (choice.ToUpper().StartsWith("Y"))
+            {
+                scraper.DownloadFile(file);
+            }
+            ViewDirectory(file.Folder);
+        }
+
+        public static int GetViewChoice(BbContentDirectory folder)
+        {
+            bool parsed;
+            int choice;
+            parsed = Int32.TryParse(Console.ReadLine(), out choice);
+            while (!parsed || choice < -1 || choice > folder.SubFolders.Count + folder.Files.Count)
+            {
+                Console.WriteLine("Invalid option. Enter the number of your choice");
+                parsed = Int32.TryParse(Console.ReadLine(), out choice);
+            }
+            return choice;
         }
 
         public static void ChangeOutputDir()
@@ -123,18 +205,26 @@ namespace BlackboardDownloader
             Console.WriteLine("Your Modules");
             Console.WriteLine("---------------------------------");
             DisplayModules(modules);
+            Console.WriteLine("-1. Quit");
             Console.Write(">>");
-            int choice = GetChoice(modules);
-            scraper.DownloadModuleFiles(modules[choice]);
+            int choice = GetModuleChoice(modules);
+            if (choice == -1) { return; }
+            else
+            {
+                scraper.DownloadModuleFiles(modules[choice]);
+            }
         }
-        public static int GetChoice(List<string> modules)
+        public static int GetModuleChoice(List<string> modules)
         {
-            int choice = Int32.Parse(Console.ReadLine());
-            while (choice <= 0 || choice > modules.Count)
+            bool parsed;
+            int choice;
+            parsed = Int32.TryParse(Console.ReadLine(), out choice);
+            while ((!parsed || choice <= 0 || choice > modules.Count) && choice != -1)
             {
                 Console.WriteLine("Invalid option. Enter the number of your choice");
-                choice = Int32.Parse(Console.ReadLine());
+                parsed = Int32.TryParse(Console.ReadLine(), out choice);
             }
+            if (choice == -1) { return choice; }
             return choice-1;     
         }
         public static void DisplayModules(List<string> modules)

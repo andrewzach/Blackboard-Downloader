@@ -38,14 +38,14 @@ namespace BlackboardDownloader
             {
                 try
                 {
-                    if (!value.EndsWith("\\"))
+                    if (!value.EndsWith("\\") && value != "")
                     {
                         value = value + "\\";   // add \ if directory doesn't end with one
                     }
                     Directory.CreateDirectory(value);
                     outputDirectory = value;
                 }
-                catch (DirectoryNotFoundException e)
+                catch (DirectoryNotFoundException)
                 {
                     Console.WriteLine("Invalid input, could not create directory.");
                 }
@@ -55,6 +55,11 @@ namespace BlackboardDownloader
         public List<string> GetModuleNames()
         {
             return webData.GetModuleNames();
+        }
+
+        public BbModule GetModuleByName(string name)
+        {
+            return webData.GetModuleByName(name);
         }
 
 
@@ -82,6 +87,7 @@ namespace BlackboardDownloader
             initialized = true;
         }
 
+        
         // Log in to webcourses with username and password, returns the Set-cookie header string
         private string GetLoginCookieHeader(string username, string password)
         {
@@ -108,8 +114,7 @@ namespace BlackboardDownloader
             return cookieHeader;
         }
 
-
-    // ### POPULATING CONTENT ###
+        // ### POPULATING CONTENT ###
         public void PopulateAllData()
         {
             PopulateModules();  // scrapes list of modules available
@@ -142,11 +147,21 @@ namespace BlackboardDownloader
         public void PopulateModuleContent(BbModule m)
         {
             Console.Write("\nPopulating content for " + m.Name);
-            if(!m.Initialized)
+            try
             {
-                CreateMainContentDirectory(m);
+                if (!m.Initialized)
+                {
+                    CreateMainContentDirectory(m);
+                }
+                PopulateContentDirectory(m.Content);
             }
-            PopulateContentDirectory(m.Content);
+            catch(Exception e)
+            {
+                Console.Write(" Error populating content for module.");
+                log.Write("Content population error for: " + m.Name);
+                log.WriteException(e);
+                log.Write(e.StackTrace);
+            }
         }
 
         // Used recursively to populate all subfolders of a module
@@ -161,20 +176,20 @@ namespace BlackboardDownloader
                 Uri linkURL = new Uri(folder.Url, link.Attributes["href"].Value);
                 if (HTMLParser.IsSubFolder(link))   // content is a subfolder
                 {
-                    BbContentDirectory subFolder = new BbContentDirectory(link.InnerText, linkURL);
+                    BbContentDirectory subFolder = new BbContentDirectory(link.InnerText, linkURL, folder);
                     folder.AddSubFolder(subFolder);
                     PopulateContentDirectory(subFolder);
                 }
                 else if (HTMLParser.IsLearningUnit(link)) //content is a learning unit
                 {
-                    BbContentDirectory subFolder = new BbContentDirectory(link.InnerText, linkURL);
+                    BbContentDirectory subFolder = new BbContentDirectory(link.InnerText, linkURL, folder);
                     folder.AddSubFolder(subFolder);
                     PopulateLearningUnit(subFolder);
                 }
                 else        // content is a file
                 {
                     string linkType = HTMLParser.GetLinkType(linkURL);
-                    folder.AddFile(new BbContentItem(link.InnerText, linkURL, linkType));
+                    folder.AddFile(new BbContentItem(link.InnerText, linkURL, folder, linkType));
                 }
             }
         }
@@ -190,7 +205,7 @@ namespace BlackboardDownloader
             HtmlNode nextLink;
             while (nextURL != null)
             {
-                Console.Write(",");
+                Console.Write(".");
                 string contentSource = http.DownloadString(nextURL);
                 List<HtmlNode> contentLinks = HTMLParser.GetLearningUnitContent(contentSource);
                 // for each content link found, add a file. Usually only one
@@ -200,7 +215,7 @@ namespace BlackboardDownloader
                     string linkType = HTMLParser.GetLinkType(contentURL);
                     string linkName = HTMLParser.GetLinkText(link);
                     if (linkName == "DefaultText") { linkName = HTMLParser.GetPageTitle(contentSource); }
-                    folder.AddFile(new BbContentItem(linkName, contentURL, linkType));
+                    folder.AddFile(new BbContentItem(linkName, contentURL, folder, linkType));
                 }
                 if (contentLinks.Count == 0) // if no content links found, look for content source in iFrame
                 {
@@ -210,7 +225,7 @@ namespace BlackboardDownloader
                         Uri contentURL = new Uri(folder.Url, iFrameLink);
                         string linkType = HTMLParser.GetLinkType(contentURL);
                         string linkName = HTMLParser.GetPageTitle(contentSource);
-                        folder.AddFile(new BbContentItem(linkName, contentURL, linkType));
+                        folder.AddFile(new BbContentItem(linkName, contentURL, folder, linkType));
                     }
                 }
                 nextLink = HTMLParser.GetNextLearningUnitContent(contentSource);
@@ -253,7 +268,7 @@ namespace BlackboardDownloader
         }
 
         // Downloads a BbContentItem file and saves it to directory.
-        public void DownloadFile(BbContentItem file, string directory)
+        private void DownloadFile(BbContentItem file, string directory)
         {
             string shortDir = directory.Substring(outputDirectory.Length, directory.Length - outputDirectory.Length);
             try
@@ -285,6 +300,11 @@ namespace BlackboardDownloader
                 log.Write(shortDir);
                 Console.WriteLine("ERROR: Cannot download file " + file);
             }
+        }
+
+        public void DownloadFile(BbContentItem file)
+        {
+            DownloadFile(file, outputDirectory);
         }
 
         public void CreateUrlShortcut(BbContentItem file, string directory)
