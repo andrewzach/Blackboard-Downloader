@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlackboardDownloader
 {
+    [Serializable]
     public class BbContentDirectory
     {
         private List<BbContentDirectory> subFolders;
@@ -60,6 +61,20 @@ namespace BlackboardDownloader
         public void AddSubFolder(BbContentDirectory s)
         {
             subFolders.Add(s);
+        }
+
+        public override bool Equals(object other)
+        {
+            return Equals(other as BbContentDirectory);
+        }
+
+        public bool Equals(BbContentDirectory other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+            return this.url.Equals(other.Url);
         }
 
     }

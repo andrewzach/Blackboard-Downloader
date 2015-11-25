@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlackboardDownloader
 {
+    [Serializable]
     public class BbModule
     {
         private string name;
@@ -42,6 +43,20 @@ namespace BlackboardDownloader
         {
             get { return content; }
             set { content = value; }
+        }
+
+        public override bool Equals(object other)
+        {
+            return Equals(other as BbModule);
+        }
+
+        public bool Equals(BbModule other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+            return this.url.Equals(other.Url);
         }
     }
 }

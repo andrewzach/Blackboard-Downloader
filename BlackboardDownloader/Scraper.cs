@@ -9,6 +9,8 @@ using HtmlAgilityPack;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace BlackboardDownloader
 {
@@ -38,7 +40,11 @@ namespace BlackboardDownloader
             {
                 try
                 {
-                    if (!value.EndsWith("\\") && value != "")
+                    if (value == "")
+                    {
+                        value = outputDirectory;
+                    }
+                    else if (!value.EndsWith("\\"))
                     {
                         value = value + "\\";   // add \ if directory doesn't end with one
                     }
@@ -139,7 +145,11 @@ namespace BlackboardDownloader
             {
                 // for each module link found, create and add a new module
                 Uri moduleURL = new Uri(new Uri(PORTAL), link.Attributes["href"].Value);
-                webData.AddModule(new BbModule(link.InnerHtml, moduleURL));
+                BbModule newModule = new BbModule(link.InnerHtml, moduleURL);
+                if (!webData.Modules.Contains(newModule))
+                {
+                    webData.AddModule(newModule);
+                }
             }
         }
 
@@ -177,19 +187,29 @@ namespace BlackboardDownloader
                 if (HTMLParser.IsSubFolder(link))   // content is a subfolder
                 {
                     BbContentDirectory subFolder = new BbContentDirectory(link.InnerText, linkURL, folder);
-                    folder.AddSubFolder(subFolder);
+                    if (!folder.SubFolders.Contains(subFolder))
+                    {
+                        folder.AddSubFolder(subFolder);
+                    }
                     PopulateContentDirectory(subFolder);
                 }
                 else if (HTMLParser.IsLearningUnit(link)) //content is a learning unit
                 {
                     BbContentDirectory subFolder = new BbContentDirectory(link.InnerText, linkURL, folder);
-                    folder.AddSubFolder(subFolder);
+                    if (!folder.SubFolders.Contains(subFolder))
+                    {
+                        folder.AddSubFolder(subFolder);
+                    }
                     PopulateLearningUnit(subFolder);
                 }
                 else        // content is a file
                 {
                     string linkType = HTMLParser.GetLinkType(linkURL);
-                    folder.AddFile(new BbContentItem(link.InnerText, linkURL, folder, linkType));
+                    BbContentItem newFile = new BbContentItem(link.InnerText, linkURL, folder, linkType);
+                    if (!folder.Files.Contains(newFile))
+                    {
+                        folder.AddFile(newFile);
+                    }
                 }
             }
         }
@@ -384,6 +404,37 @@ namespace BlackboardDownloader
                     Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - URL format issue");
                 }
             }
+        }
+
+        public void SaveData()
+        {
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\savedata.bin", FileMode.Create, FileAccess.Write, FileShare.None);
+            formatter.Serialize(stream, webData);
+            stream.Close();
+        }
+
+        public bool LoadData()
+        {
+            bool success;
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream;
+            try
+            {
+                stream = new FileStream(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\savedata.bin", FileMode.Open, FileAccess.Read, FileShare.None);
+                webData = (BbData)formatter.Deserialize(stream);
+                success = true;
+                stream.Close();
+            }
+            catch (FileNotFoundException e)
+            {
+                success = false;
+            }
+            catch (SerializationException e)
+            {
+                success = false;
+            }
+            return success;
         }
     }
 }

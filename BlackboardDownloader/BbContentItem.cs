@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlackboardDownloader
 {
+    [Serializable]
     public class BbContentItem
     {
         private string name;
@@ -58,6 +59,20 @@ namespace BlackboardDownloader
         {
             return "Name[" + name + "] Filename[" + filename + "] Type[" + linkType + "]" +
                 Environment.NewLine + "URL[" + url.AbsoluteUri + "]";
+        }
+
+        public override bool Equals(object other)
+        {
+            return Equals(other as BbContentItem);
+        }
+
+        public bool Equals(BbContentItem other)
+        { 
+            if (other == null)
+            {
+                return false;
+            }
+            return this.url.Equals(other.Url);
         }
     }
 }

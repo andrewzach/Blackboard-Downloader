@@ -20,6 +20,7 @@ namespace BlackboardDownloader
                 { '1', "Download Content" },
                 { '2', "View Content" },
                 { '3', "Change Output Direcctory" },
+                { '4', "Check For New Content" },
                 { 'Q', "Quit" }
             };
             DisplayMenu();
@@ -31,11 +32,13 @@ namespace BlackboardDownloader
                     case '1': DownloadContent(); break;
                     case '2': ViewContent(); break;
                     case '3': ChangeOutputDir(); break;
+                    case '4': CheckNewContent(); break;
                 }
                 DisplayMenu();
                 choice = GetMenuChoice();
             }
             Console.WriteLine("Goodbye");
+            scraper.SaveData();
             Console.ReadLine();
         }
 
@@ -50,11 +53,21 @@ namespace BlackboardDownloader
             Console.WriteLine("Login successful!\n");
 
             //Populate Content
-            Console.WriteLine("Populating content data from webcourses. Please wait...");
-            scraper.PopulateAllData();
-            Console.WriteLine("\nContent population complete\n");
+            
+            if (scraper.LoadData())
+            {
+                Console.WriteLine("Loading data from previous session...\n");
+            }
+            else
+            {
+                Console.WriteLine("Populating content data from webcourses. Please wait...");
+                scraper.PopulateAllData();
+                Console.WriteLine("\nContent population complete\n");
+            }   
             Console.WriteLine("Modules found: ");
             DisplayModules(scraper.GetModuleNames());
+            Console.WriteLine();
+            Console.WriteLine("Current Output Directory: " + scraper.OutputDirectory);
             Console.WriteLine();
         }
 
@@ -233,6 +246,13 @@ namespace BlackboardDownloader
             {
                 Console.WriteLine((i + 1) + ". " + modules[i]);
             }
+        }
+
+        public static void CheckNewContent()
+        {
+            Console.WriteLine("Populating content data from webcourses. Please wait...");
+            scraper.PopulateAllData();
+            Console.WriteLine("\nContent population complete\n");
         }
     }
 }

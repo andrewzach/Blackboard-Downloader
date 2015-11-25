@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlackboardDownloader
 {
+    [Serializable]
     public class BbData
     {
         private List<BbModule> modules;
