@@ -21,7 +21,7 @@ namespace BlackboardDownloader
         private WebClientEx http;
         private string outputDirectory;
         private BbData webData;
-        private bool initialized;
+        public bool initialized;
         private string cookieHeader;
         private Logger log;
 
@@ -179,6 +179,7 @@ namespace BlackboardDownloader
         {
             string pageSource = http.DownloadString(folder.Url.AbsoluteUri);
             List<HtmlNode> contentLinks = HTMLParser.GetContentLinks(pageSource);
+            if (contentLinks == null) return;
             foreach (HtmlNode link in contentLinks)
             {
                 //Console.WriteLine("Adding " + folder.Name + ": " + link.InnerText);

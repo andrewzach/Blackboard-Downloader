@@ -76,6 +76,9 @@ namespace BlackboardDownloader
             }
             return this.url.Equals(other.Url);
         }
-
+        public override int GetHashCode()
+        {
+            return url.GetHashCode();
+        }
     }
 }

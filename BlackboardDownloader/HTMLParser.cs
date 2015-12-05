@@ -31,7 +31,8 @@ namespace BlackboardDownloader
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
             HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//li[contains(@id, 'contentListItem')]//a[not(contains(@href,'uploadAssignment?'))]");
-            return contentLinks.ToList();
+            if (contentLinks != null) return contentLinks.ToList();
+            else return null;
         }
 
         public static List<HtmlNode> GetLearningUnitLinks(string pageSource)
@@ -39,7 +40,8 @@ namespace BlackboardDownloader
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
             HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//a[contains(@href,'displayLearningUnit')]");
-            return contentLinks.ToList();
+            if (contentLinks != null) return contentLinks.ToList();
+            else return null;
         }
 
         public static HtmlNode GetNextLearningUnitContent(string pageSource)

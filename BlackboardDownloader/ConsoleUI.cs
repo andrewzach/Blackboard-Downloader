@@ -253,6 +253,7 @@ namespace BlackboardDownloader
             Console.WriteLine("Populating content data from webcourses. Please wait...");
             scraper.PopulateAllData();
             Console.WriteLine("\nContent population complete\n");
+            scraper.SaveData();
         }
     }
 }
