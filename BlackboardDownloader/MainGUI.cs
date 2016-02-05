@@ -3,57 +3,64 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace BlackboardDownloader
 {
-    public class ConsoleUI
+    class MainGUI
     {
         public static Dictionary<char, string> menuOptions;
         public static Scraper scraper;
+        public static LoginForm loginForm;
 
-        //public static void Main(string[] args)
-        //{ 
-        //    DisplayWelcome();
-        //    Initialize();
-        //    menuOptions = new Dictionary<char, string>
-        //    {
-        //        { '1', "Download Content" },
-        //        { '2', "View Content" },
-        //        { '3', "Change Output Direcctory" },
-        //        { '4', "Check For New Content" },
-        //        { 'Q', "Quit" }
-        //    };
-        //    DisplayMenu();
-        //    char choice = GetMenuChoice();
-        //    while (choice != 'Q')
-        //    {
-        //        switch(choice)
-        //        {
-        //            case '1': DownloadContent(); break;
-        //            case '2': ViewContent(); break;
-        //            case '3': ChangeOutputDir(); break;
-        //            case '4': CheckNewContent(); break;
-        //        }
-        //        DisplayMenu();
-        //        choice = GetMenuChoice();
-        //    }
-        //    Console.WriteLine("Goodbye");
-        //    scraper.SaveData();
-        //    Console.ReadLine();
-        //}
+        [STAThread]
+        public static void Main(string[] args)
+        {
+            DisplayWelcome();
+            Initialize();
+            menuOptions = new Dictionary<char, string>
+            {
+                { '1', "Download Content" },
+                { '2', "View Content" },
+                { '3', "Change Output Direcctory" },
+                { '4', "Check For New Content" },
+                { 'Q', "Quit" }
+            };
+            DisplayMenu();
+            char choice = GetMenuChoice();
+            while (choice != 'Q')
+            {
+                switch (choice)
+                {
+                    case '1': DownloadContent(); break;
+                    case '2': ViewContent(); break;
+                    case '3': ChangeOutputDir(); break;
+                    case '4': CheckNewContent(); break;
+                }
+                DisplayMenu();
+                choice = GetMenuChoice();
+            }
+            Console.WriteLine("Goodbye");
+            scraper.SaveData();
+            Console.ReadLine();
+        }
 
         public static void Initialize()
         {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             scraper = new Scraper();
+            loginForm = new LoginForm(scraper);
             //Login
-            while (!Login())
-            {
-                Console.WriteLine("Invalid login. Please try again.\n");
-            }
+            Application.Run(loginForm);
+            //while (!LoginForm())
+            //{
+            //    Console.WriteLine("Invalid login. Please try again.\n");
+            //}
             Console.WriteLine("Login successful!\n");
 
             //Populate Content
-            
+
             if (scraper.LoadData())
             {
                 Console.WriteLine("Loading data from previous session...\n");
@@ -63,7 +70,7 @@ namespace BlackboardDownloader
                 Console.WriteLine("Populating content data from webcourses. Please wait...");
                 scraper.PopulateAllData();
                 Console.WriteLine("\nContent population complete\n");
-            }   
+            }
             Console.WriteLine("Modules found: ");
             DisplayModules(scraper.GetModuleNames());
             Console.WriteLine();
@@ -153,7 +160,7 @@ namespace BlackboardDownloader
             }
             else if (choice <= folder.SubFolders.Count)
             {
-                 ViewDirectory(folder.SubFolders[choice-1]);
+                ViewDirectory(folder.SubFolders[choice - 1]);
             }
             else
             {
@@ -238,7 +245,7 @@ namespace BlackboardDownloader
                 parsed = Int32.TryParse(Console.ReadLine(), out choice);
             }
             if (choice == -1) { return choice; }
-            return choice-1;     
+            return choice - 1;
         }
         public static void DisplayModules(List<string> modules)
         {
