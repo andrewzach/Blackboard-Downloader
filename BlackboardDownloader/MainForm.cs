@@ -21,17 +21,19 @@ namespace BlackboardDownloader
         public MainForm()
         {
             InitializeComponent();
+            Initialize();
         }
 
         public MainForm(Scraper scraper)
         {
             InitializeComponent();
-            this.scraper = scraper;
             Initialize();
         }
 
         private void Initialize()
         {
+            scraper = new Scraper();
+
             ShowLoginForm();
 
             //Populate Content
@@ -151,46 +153,36 @@ namespace BlackboardDownloader
 
         private void DownloadButton_Click(object sender, EventArgs e)
         {
-            if (contentTree.SelectedNode == null)
+            TreeNode selected = contentTree.SelectedNode;
+            if (selected == null)
             {
                 statusLabel.Text = "Nothing selected to download";
             }
-            else if (contentTree.SelectedNode.Tag.GetType() == typeof(BbModule))
+            else
             {
-                BbModule module = contentTree.SelectedNode.Tag as BbModule;
-                StartFileCounter(module.Content);
-                DownloadFolder(module.Content, scraper.OutputDirectory);
-            }
-            // Single folder selected
-            else if (contentTree.SelectedNode.Tag.GetType() == typeof(BbContentDirectory))
-            {
-                BbContentDirectory folder = contentTree.SelectedNode.Tag as BbContentDirectory;
-                StartFileCounter(folder);
-                DownloadFolder(folder, scraper.OutputDirectory);
-            }
-            // Single file selected
-            else if (contentTree.SelectedNode.Tag.GetType() == typeof(BbContentItem))
-            {
-                BbContentItem file = contentTree.SelectedNode.Tag as BbContentItem;
-                statusLabel.Text = "Downloading file (" + file.LinkType + "): " + file.Name;
-                scraper.DownloadFile(file);
+                BackgroundWorker bgw = new BackgroundWorker();
+                bgw.WorkerSupportsCancellation = true;
+                bgw.WorkerReportsProgress = true;
+                bgw.DoWork += new DoWorkEventHandler(DownloadBW_DoWork);
+                bgw.ProgressChanged += new ProgressChangedEventHandler(DownloadBW_ProgressChanged);
+                bgw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(DownloadBW_RunWorkerCompleted);
+                bgw.RunWorkerAsync(selected);
             }
         }
 
 
-        public void DownloadFolder(BbContentDirectory folder, string directory)
+        public void DownloadFolder(BbContentDirectory folder, string directory, BackgroundWorker worker)
         {
             string shortDir = directory.Substring(scraper.outputDirectory.Length, directory.Length - scraper.outputDirectory.Length);
             foreach (BbContentItem file in folder.Files)
             {
-                statusLabel.Text = "Downloading file (" + file.LinkType + "): " + shortDir + file.Name;
-                UpdateFileCounter();    // Add file count to statusLabel
-                statusLabel.Refresh();
+                currentFile++;
+                worker.ReportProgress(currentFile/totalFiles, "Downloading file (" + file.LinkType + "): " + shortDir + file.Name + "( " + currentFile + " of " + totalFiles + " )");
                 scraper.DownloadFile(file, directory);
             }
             foreach (BbContentDirectory subFolder in folder.SubFolders)
             {
-                DownloadFolder(subFolder, directory + BbUtils.CleanDirectory(subFolder.Name) + "\\");   //Add subfolder name to directory
+                DownloadFolder(subFolder, directory + BbUtils.CleanDirectory(subFolder.Name) + "\\", worker);   //Add subfolder name to directory
             }
         }
 
@@ -198,12 +190,6 @@ namespace BlackboardDownloader
         {
             currentFile = 0;
             totalFiles = folder.CountAllFiles();
-        }
-
-        private void UpdateFileCounter()
-        {
-            currentFile++;
-            statusLabel.Text += "( " + currentFile + " of " + totalFiles + " )";
         }
 
         private void ShowLoginForm()
@@ -226,26 +212,25 @@ namespace BlackboardDownloader
             statusLabel.ResetText();
         }
 
-        private void loginToolStripMenuItem_Click(object sender, EventArgs e)
+        private void loginMenuItem_Click(object sender, EventArgs e)
         {
-            scraper = new Scraper();
             Initialize();
         }
 
-        private void refreshContentToolStripMenuItem_Click(object sender, EventArgs e)
+        private void refreshMenuItem_Click(object sender, EventArgs e)
         {
             scraper.PopulateAllData();
             // TODO: Add updates to status label. Run on separate thread?
             PopulateTreeView();
         }
 
-        private void viewLogToolStripMenuItem_Click(object sender, EventArgs e)
+        private void viewLogMenuItem_Click(object sender, EventArgs e)
         {
             string logFilePath = scraper.log.GetLogFilePath();
             System.Diagnostics.Process.Start(logFilePath);
         }
 
-        private void outputDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        private void outputMenuItem_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             DialogResult result = fbd.ShowDialog();
@@ -255,9 +240,54 @@ namespace BlackboardDownloader
             }
         }
 
-        private void menuItem1_Click(object sender, EventArgs e)
-        {
+        private void commandsMenuItem_Click(object sender, EventArgs e) { }
 
+        private void DownloadBW_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+            TreeNode selectedNode = e.Argument as TreeNode;
+
+            if (selectedNode.Tag.GetType() == typeof(BbModule))
+            {
+                BbModule module = selectedNode.Tag as BbModule;
+                StartFileCounter(module.Content);
+                DownloadFolder(module.Content, scraper.OutputDirectory, worker);
+            }
+            // Single folder selected
+            else if (selectedNode.Tag.GetType() == typeof(BbContentDirectory))
+            {
+                BbContentDirectory folder = selectedNode.Tag as BbContentDirectory;
+                StartFileCounter(folder);
+                DownloadFolder(folder, scraper.OutputDirectory, worker);
+            }
+            // Single file selected
+            else if (selectedNode.Tag.GetType() == typeof(BbContentItem))
+            {
+                BbContentItem file = selectedNode.Tag as BbContentItem;
+                worker.ReportProgress(0, "Downloading file (" + file.LinkType + "): " + file.Name);
+                scraper.DownloadFile(file);
+            }
+        }
+
+        private void DownloadBW_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            statusLabel.Text = e.UserState as string;
+        }
+
+        private void DownloadBW_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if(e.Cancelled)
+            {
+                statusLabel.Text = "Download canceled.";
+            }
+            else if (!(e.Error == null))
+            {
+                statusLabel.Text = "Error downloading files.";
+            }
+            else
+            {
+                statusLabel.Text = "Done downloading " + totalFiles + " files.";
+            }
         }
     }
 }
