@@ -20,7 +20,7 @@ namespace BlackboardDownloader
         public static string MODID = "_25_1";
         private WebClientEx http;
         private string outputDirectory;
-        private BbData webData;
+        public BbData webData;
         public bool initialized;
         private string cookieHeader;
         private Logger log;

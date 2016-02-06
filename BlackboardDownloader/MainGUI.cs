@@ -11,71 +11,19 @@ namespace BlackboardDownloader
     {
         public static Dictionary<char, string> menuOptions;
         public static Scraper scraper;
-        public static LoginForm loginForm;
 
         [STAThread]
         public static void Main(string[] args)
         {
             DisplayWelcome();
-            Initialize();
-            menuOptions = new Dictionary<char, string>
-            {
-                { '1', "Download Content" },
-                { '2', "View Content" },
-                { '3', "Change Output Direcctory" },
-                { '4', "Check For New Content" },
-                { 'Q', "Quit" }
-            };
-            DisplayMenu();
-            char choice = GetMenuChoice();
-            while (choice != 'Q')
-            {
-                switch (choice)
-                {
-                    case '1': DownloadContent(); break;
-                    case '2': ViewContent(); break;
-                    case '3': ChangeOutputDir(); break;
-                    case '4': CheckNewContent(); break;
-                }
-                DisplayMenu();
-                choice = GetMenuChoice();
-            }
-            Console.WriteLine("Goodbye");
-            scraper.SaveData();
-            Console.ReadLine();
-        }
-
-        public static void Initialize()
-        {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             scraper = new Scraper();
-            loginForm = new LoginForm(scraper);
-            //Login
-            Application.Run(loginForm);
-            //while (!LoginForm())
-            //{
-            //    Console.WriteLine("Invalid login. Please try again.\n");
-            //}
-            Console.WriteLine("Login successful!\n");
+            Application.Run(new MainForm(scraper));
 
-            //Populate Content
-
-            if (scraper.LoadData())
-            {
-                Console.WriteLine("Loading data from previous session...\n");
-            }
-            else
-            {
-                Console.WriteLine("Populating content data from webcourses. Please wait...");
-                scraper.PopulateAllData();
-                Console.WriteLine("\nContent population complete\n");
-            }
-            Console.WriteLine("Modules found: ");
-            DisplayModules(scraper.GetModuleNames());
-            Console.WriteLine();
-            Console.WriteLine("Current Output Directory: " + scraper.OutputDirectory);
-            Console.WriteLine();
+            Console.WriteLine("Goodbye");
+            scraper.SaveData();
+            Console.ReadLine();
         }
 
         public static void DisplayWelcome()
@@ -85,30 +33,6 @@ namespace BlackboardDownloader
             Console.WriteLine("############# By Andrew Zacharias #############");
             Console.WriteLine("###############################################");
             Console.WriteLine();
-        }
-
-        public static void DisplayMenu()
-        {
-            Console.WriteLine();
-            Console.WriteLine("--------- MAIN MENU ---------");
-            foreach (var option in menuOptions)
-            {
-                Console.WriteLine(option.Key + ". " + option.Value);
-            }
-        }
-
-        public static char GetMenuChoice()
-        {
-            char choice;
-            Console.Write(">> ");
-            choice = Console.ReadLine().ToUpper()[0];     // Take first char of input string as selected choice
-            while (!menuOptions.ContainsKey(choice))
-            {
-                Console.WriteLine("Invalid input. Try again.");
-                Console.Write(">> ");
-                choice = Console.ReadLine().ToUpper()[0];
-            }
-            return choice;
         }
 
         public static void ViewContent()
