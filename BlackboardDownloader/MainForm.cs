@@ -14,6 +14,10 @@ namespace BlackboardDownloader
     {
         private Scraper scraper;
 
+        // Counters to show status of download
+        private int currentFile;
+        private int totalFiles;
+
         public MainForm()
         {
             InitializeComponent();
@@ -49,6 +53,14 @@ namespace BlackboardDownloader
             {
                 TreeNode moduleNode = new TreeNode(module.Name);
                 moduleNode.Tag = module;
+                foreach (BbContentDirectory subFolder in module.Content.SubFolders)
+                {
+                    PopulateTreeFolder(moduleNode, subFolder);
+                }
+                foreach (BbContentItem file in module.Content.Files)
+                {
+                    AddTreeFile(moduleNode, file);
+                }
                 PopulateTreeFolder(moduleNode, module.Content);
                 contentTree.Nodes.Add(moduleNode);
             }
@@ -91,6 +103,8 @@ namespace BlackboardDownloader
         private void contentTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             ClearInfoBox();
+
+            // File selected
             if (contentTree.SelectedNode.Tag.GetType() == typeof(BbContentItem))
             {
                 BbContentItem file = contentTree.SelectedNode.Tag as BbContentItem;
@@ -103,6 +117,91 @@ namespace BlackboardDownloader
                 infoLabel4.Text = "URL";
                 infoText4.Text = file.Url.AbsoluteUri;
             }
+
+            // Folder selected
+            else if (contentTree.SelectedNode.Tag.GetType() == typeof(BbContentDirectory))
+            {
+                BbContentDirectory folder = contentTree.SelectedNode.Tag as BbContentDirectory;
+                infoLabel1.Text = "Name";
+                infoText1.Text = folder.Name;
+                infoLabel2.Text = "Subfolders";
+                infoText2.Text = folder.SubFolders.Count.ToString();
+                infoLabel3.Text = "Files";
+                infoText3.Text = folder.CountAllFiles().ToString();
+                infoLabel4.Text = "URL";
+                infoText4.Text = folder.Url.AbsoluteUri;
+            }
+
+            // Module selected
+            else if (contentTree.SelectedNode.Tag.GetType() == typeof(BbModule))
+            {
+                BbModule module = contentTree.SelectedNode.Tag as BbModule;
+                infoLabel1.Text = "Name";
+                infoText1.Text = module.Name;
+                infoLabel2.Text = "Subfolders";
+                infoText2.Text = module.Content.SubFolders.Count.ToString();
+                infoLabel3.Text = "Files";
+                infoText3.Text = module.Content.CountAllFiles().ToString();
+                infoLabel4.Text = "URL";
+                infoText4.Text = module.Url.AbsoluteUri;
+            }
+        }
+
+        private void DownloadButton_Click(object sender, EventArgs e)
+        {
+            if (contentTree.SelectedNode == null)
+            {
+                statusLabel.Text = "Nothing selected to download";
+            }
+            else if (contentTree.SelectedNode.Tag.GetType() == typeof(BbModule))
+            {
+                BbModule module = contentTree.SelectedNode.Tag as BbModule;
+                StartFileCounter(module.Content);
+                DownloadFolder(module.Content, scraper.OutputDirectory);
+            }
+            // Single folder selected
+            else if (contentTree.SelectedNode.Tag.GetType() == typeof(BbContentDirectory))
+            {
+                BbContentDirectory folder = contentTree.SelectedNode.Tag as BbContentDirectory;
+                StartFileCounter(folder);
+                DownloadFolder(folder, scraper.OutputDirectory);
+            }
+            // Single file selected
+            else if (contentTree.SelectedNode.Tag.GetType() == typeof(BbContentItem))
+            {
+                BbContentItem file = contentTree.SelectedNode.Tag as BbContentItem;
+                statusLabel.Text = "Downloading file (" + file.LinkType + "): " + file.Name;
+                scraper.DownloadFile(file);
+            }
+        }
+
+
+        public void DownloadFolder(BbContentDirectory folder, string directory)
+        {
+            string shortDir = directory.Substring(scraper.outputDirectory.Length, directory.Length - scraper.outputDirectory.Length);
+            foreach (BbContentItem file in folder.Files)
+            {
+                statusLabel.Text = "Downloading file (" + file.LinkType + "): " + shortDir + file.Name;
+                UpdateFileCounter();    // Add file count to statusLabel
+                statusLabel.Refresh();
+                scraper.DownloadFile(file, directory);
+            }
+            foreach (BbContentDirectory subFolder in folder.SubFolders)
+            {
+                DownloadFolder(subFolder, directory + BbUtils.CleanDirectory(subFolder.Name) + "\\");   //Add subfolder name to directory
+            }
+        }
+
+        private void StartFileCounter(BbContentDirectory folder)
+        {
+            currentFile = 0;
+            totalFiles = folder.CountAllFiles();
+        }
+
+        private void UpdateFileCounter()
+        {
+            currentFile++;
+            statusLabel.Text += "( " + currentFile + " of " + totalFiles + " )";
         }
 
         private void ShowLoginForm()

@@ -19,7 +19,7 @@ namespace BlackboardDownloader
         public static string PORTAL = "https://dit-bb.blackboard.com";
         public static string MODID = "_25_1";
         private WebClientEx http;
-        private string outputDirectory;
+        public string outputDirectory;
         public BbData webData;
         public bool initialized;
         private string cookieHeader;
@@ -289,7 +289,7 @@ namespace BlackboardDownloader
         }
 
         // Downloads a BbContentItem file and saves it to directory.
-        private void DownloadFile(BbContentItem file, string directory)
+        public void DownloadFile(BbContentItem file, string directory)
         {
             string shortDir = directory.Substring(outputDirectory.Length, directory.Length - outputDirectory.Length);
             try
