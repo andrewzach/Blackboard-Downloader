@@ -23,11 +23,6 @@ namespace BlackboardDownloader
         {
             InitializeComponent();
             this.scraper = scraper;
-
-            // Make sure Window has focus
-            this.WindowState = FormWindowState.Minimized;
-            this.Show();
-            this.WindowState = FormWindowState.Normal;
         }
 
         public string GetUsername()
@@ -57,6 +52,7 @@ namespace BlackboardDownloader
 
         private void SubmitButton_Click(object sender, EventArgs e)
         {
+            DialogResult = DialogResult.Yes;
             bool success = scraper.Login(usernameText.Text, passwordText.Text);
             if (success)
             {
@@ -73,6 +69,11 @@ namespace BlackboardDownloader
         private void label4_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void quitButton_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Abort;
         }
     }
 }

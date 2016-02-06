@@ -49,10 +49,12 @@ namespace BlackboardDownloader
 
         private void PopulateTreeView()
         {
+            contentTree.Nodes.Clear(); // Clear any existing data
             foreach (BbModule module in scraper.webData.Modules)
             {
                 TreeNode moduleNode = new TreeNode(module.Name);
                 moduleNode.Tag = module;
+                moduleNode.NodeFont = new Font(contentTree.Font, FontStyle.Bold); // make module nodes bold
                 foreach (BbContentDirectory subFolder in module.Content.SubFolders)
                 {
                     PopulateTreeFolder(moduleNode, subFolder);
@@ -207,15 +209,55 @@ namespace BlackboardDownloader
         private void ShowLoginForm()
         {
             statusLabel.Text = "Waiting for login...";
-            Application.Run(new LoginForm(scraper));
-
+            LoginForm loginForm = new LoginForm(scraper);
+            DialogResult result = loginForm.ShowDialog();
             // While login has not been successful, keep opening the LoginForm
             while (!scraper.initialized)     
             {
+                // If user chose to quit the program
+                if (result == DialogResult.Abort)
+                {
+                    this.Close();
+                    return;
+                }
                 statusLabel.Text = "Login not successful. Re-opening login form.";
-                Application.Run(new LoginForm(scraper));
+                loginForm.ShowDialog();
             }
             statusLabel.ResetText();
+        }
+
+        private void loginToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            scraper = new Scraper();
+            Initialize();
+        }
+
+        private void refreshContentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            scraper.PopulateAllData();
+            // TODO: Add updates to status label. Run on separate thread?
+            PopulateTreeView();
+        }
+
+        private void viewLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string logFilePath = scraper.log.GetLogFilePath();
+            System.Diagnostics.Process.Start(logFilePath);
+        }
+
+        private void outputDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            DialogResult result = fbd.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                scraper.OutputDirectory = fbd.SelectedPath;
+            }
+        }
+
+        private void menuItem1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

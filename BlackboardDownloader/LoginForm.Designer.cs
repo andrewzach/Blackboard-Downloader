@@ -37,6 +37,7 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.submitButton = new System.Windows.Forms.Button();
             this.warningLabel = new System.Windows.Forms.Label();
+            this.quitButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -115,24 +116,26 @@
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 79.68037F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20.31964F));
-            this.tableLayoutPanel2.Controls.Add(this.submitButton, 1, 0);
+            this.tableLayoutPanel2.ColumnCount = 3;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 59.80883F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.93628F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20.2549F));
+            this.tableLayoutPanel2.Controls.Add(this.submitButton, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.warningLabel, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.quitButton, 1, 0);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 182);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(438, 35);
             this.tableLayoutPanel2.TabIndex = 5;
             // 
             // submitButton
             // 
-            this.submitButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.submitButton.Location = new System.Drawing.Point(360, 3);
+            this.submitButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.submitButton.Location = new System.Drawing.Point(351, 3);
             this.submitButton.Name = "submitButton";
-            this.submitButton.Size = new System.Drawing.Size(75, 29);
+            this.submitButton.Size = new System.Drawing.Size(84, 29);
             this.submitButton.TabIndex = 6;
             this.submitButton.Text = "Submit";
             this.submitButton.UseVisualStyleBackColor = true;
@@ -146,9 +149,20 @@
             this.warningLabel.ForeColor = System.Drawing.Color.DarkRed;
             this.warningLabel.Location = new System.Drawing.Point(3, 0);
             this.warningLabel.Name = "warningLabel";
-            this.warningLabel.Size = new System.Drawing.Size(342, 35);
+            this.warningLabel.Size = new System.Drawing.Size(255, 35);
             this.warningLabel.TabIndex = 7;
             this.warningLabel.Click += new System.EventHandler(this.label4_Click);
+            // 
+            // quitButton
+            // 
+            this.quitButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.quitButton.Location = new System.Drawing.Point(264, 3);
+            this.quitButton.Name = "quitButton";
+            this.quitButton.Size = new System.Drawing.Size(81, 29);
+            this.quitButton.TabIndex = 8;
+            this.quitButton.Text = "Quit";
+            this.quitButton.UseVisualStyleBackColor = true;
+            this.quitButton.Click += new System.EventHandler(this.quitButton_Click);
             // 
             // LoginForm
             // 
@@ -177,5 +191,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Button submitButton;
         private System.Windows.Forms.Label warningLabel;
+        private System.Windows.Forms.Button quitButton;
     }
 }

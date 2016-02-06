@@ -23,7 +23,7 @@ namespace BlackboardDownloader
         public BbData webData;
         public bool initialized;
         private string cookieHeader;
-        private Logger log;
+        public Logger log;
 
         public Scraper()
         {

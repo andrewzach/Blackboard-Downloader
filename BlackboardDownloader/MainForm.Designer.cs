@@ -28,13 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.mainTableLayout = new System.Windows.Forms.TableLayoutPanel();
-            this.menuStrip = new System.Windows.Forms.MenuStrip();
-            this.commandsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.refreshContentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.outputDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.yourModulesLabel = new System.Windows.Forms.Label();
             this.contentTree = new System.Windows.Forms.TreeView();
             this.rightTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -50,8 +45,13 @@
             this.downloadButton = new System.Windows.Forms.Button();
             this.informationLabel = new System.Windows.Forms.Label();
             this.statusLabel = new System.Windows.Forms.Label();
+            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
+            this.menuItem1 = new System.Windows.Forms.MenuItem();
+            this.menuItem2 = new System.Windows.Forms.MenuItem();
+            this.menuItem3 = new System.Windows.Forms.MenuItem();
+            this.menuItem4 = new System.Windows.Forms.MenuItem();
+            this.menuItem5 = new System.Windows.Forms.MenuItem();
             this.mainTableLayout.SuspendLayout();
-            this.menuStrip.SuspendLayout();
             this.rightTableLayoutPanel.SuspendLayout();
             this.informationTableLayout.SuspendLayout();
             this.SuspendLayout();
@@ -63,75 +63,26 @@
             this.mainTableLayout.ColumnCount = 2;
             this.mainTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67F));
             this.mainTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
-            this.mainTableLayout.Controls.Add(this.menuStrip, 0, 0);
-            this.mainTableLayout.Controls.Add(this.yourModulesLabel, 0, 1);
-            this.mainTableLayout.Controls.Add(this.contentTree, 0, 2);
-            this.mainTableLayout.Controls.Add(this.rightTableLayoutPanel, 1, 2);
-            this.mainTableLayout.Controls.Add(this.statusLabel, 0, 3);
+            this.mainTableLayout.Controls.Add(this.yourModulesLabel, 0, 0);
+            this.mainTableLayout.Controls.Add(this.contentTree, 0, 1);
+            this.mainTableLayout.Controls.Add(this.rightTableLayoutPanel, 1, 1);
+            this.mainTableLayout.Controls.Add(this.statusLabel, 0, 2);
             this.mainTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainTableLayout.Location = new System.Drawing.Point(0, 0);
             this.mainTableLayout.Name = "mainTableLayout";
-            this.mainTableLayout.RowCount = 4;
-            this.mainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.mainTableLayout.RowCount = 3;
             this.mainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.mainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.mainTableLayout.Size = new System.Drawing.Size(982, 553);
             this.mainTableLayout.TabIndex = 0;
             // 
-            // menuStrip
-            // 
-            this.mainTableLayout.SetColumnSpan(this.menuStrip, 2);
-            this.menuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.commandsToolStripMenuItem});
-            this.menuStrip.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(982, 28);
-            this.menuStrip.TabIndex = 0;
-            this.menuStrip.Text = "menuStrip1";
-            // 
-            // commandsToolStripMenuItem
-            // 
-            this.commandsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loginToolStripMenuItem,
-            this.refreshContentToolStripMenuItem,
-            this.outputDirectoryToolStripMenuItem,
-            this.viewLogToolStripMenuItem});
-            this.commandsToolStripMenuItem.Name = "commandsToolStripMenuItem";
-            this.commandsToolStripMenuItem.Size = new System.Drawing.Size(96, 24);
-            this.commandsToolStripMenuItem.Text = "Commands";
-            // 
-            // loginToolStripMenuItem
-            // 
-            this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
-            this.loginToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
-            this.loginToolStripMenuItem.Text = "Login";
-            // 
-            // refreshContentToolStripMenuItem
-            // 
-            this.refreshContentToolStripMenuItem.Name = "refreshContentToolStripMenuItem";
-            this.refreshContentToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
-            this.refreshContentToolStripMenuItem.Text = "Refresh Content";
-            // 
-            // outputDirectoryToolStripMenuItem
-            // 
-            this.outputDirectoryToolStripMenuItem.Name = "outputDirectoryToolStripMenuItem";
-            this.outputDirectoryToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
-            this.outputDirectoryToolStripMenuItem.Text = "Output Directory...";
-            // 
-            // viewLogToolStripMenuItem
-            // 
-            this.viewLogToolStripMenuItem.Name = "viewLogToolStripMenuItem";
-            this.viewLogToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
-            this.viewLogToolStripMenuItem.Text = "View Log";
-            // 
             // yourModulesLabel
             // 
             this.yourModulesLabel.AutoSize = true;
             this.mainTableLayout.SetColumnSpan(this.yourModulesLabel, 2);
             this.yourModulesLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.yourModulesLabel.Location = new System.Drawing.Point(3, 30);
+            this.yourModulesLabel.Location = new System.Drawing.Point(3, 0);
             this.yourModulesLabel.Name = "yourModulesLabel";
             this.yourModulesLabel.Size = new System.Drawing.Size(976, 20);
             this.yourModulesLabel.TabIndex = 1;
@@ -140,9 +91,9 @@
             // contentTree
             // 
             this.contentTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.contentTree.Location = new System.Drawing.Point(3, 53);
+            this.contentTree.Location = new System.Drawing.Point(3, 23);
             this.contentTree.Name = "contentTree";
-            this.contentTree.Size = new System.Drawing.Size(651, 477);
+            this.contentTree.Size = new System.Drawing.Size(651, 507);
             this.contentTree.TabIndex = 2;
             this.contentTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.contentTree_AfterSelect);
             // 
@@ -154,13 +105,13 @@
             this.rightTableLayoutPanel.Controls.Add(this.downloadButton, 0, 0);
             this.rightTableLayoutPanel.Controls.Add(this.informationLabel, 0, 1);
             this.rightTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rightTableLayoutPanel.Location = new System.Drawing.Point(660, 53);
+            this.rightTableLayoutPanel.Location = new System.Drawing.Point(660, 23);
             this.rightTableLayoutPanel.Name = "rightTableLayoutPanel";
             this.rightTableLayoutPanel.RowCount = 3;
             this.rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 80F));
-            this.rightTableLayoutPanel.Size = new System.Drawing.Size(319, 477);
+            this.rightTableLayoutPanel.Size = new System.Drawing.Size(319, 507);
             this.rightTableLayoutPanel.TabIndex = 3;
             // 
             // informationTableLayout
@@ -177,23 +128,23 @@
             this.informationTableLayout.Controls.Add(this.infoText1, 1, 0);
             this.informationTableLayout.Controls.Add(this.infoLabel1, 0, 0);
             this.informationTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.informationTableLayout.Location = new System.Drawing.Point(3, 130);
+            this.informationTableLayout.Location = new System.Drawing.Point(3, 136);
             this.informationTableLayout.Name = "informationTableLayout";
             this.informationTableLayout.RowCount = 4;
             this.informationTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.informationTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.informationTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.informationTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.informationTableLayout.Size = new System.Drawing.Size(313, 344);
+            this.informationTableLayout.Size = new System.Drawing.Size(313, 368);
             this.informationTableLayout.TabIndex = 0;
             // 
             // infoText4
             // 
             this.infoText4.AutoSize = true;
             this.infoText4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.infoText4.Location = new System.Drawing.Point(96, 258);
+            this.infoText4.Location = new System.Drawing.Point(96, 276);
             this.infoText4.Name = "infoText4";
-            this.infoText4.Size = new System.Drawing.Size(214, 86);
+            this.infoText4.Size = new System.Drawing.Size(214, 92);
             this.infoText4.TabIndex = 7;
             this.infoText4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -201,9 +152,9 @@
             // 
             this.infoLabel4.AutoSize = true;
             this.infoLabel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.infoLabel4.Location = new System.Drawing.Point(3, 258);
+            this.infoLabel4.Location = new System.Drawing.Point(3, 276);
             this.infoLabel4.Name = "infoLabel4";
-            this.infoLabel4.Size = new System.Drawing.Size(87, 86);
+            this.infoLabel4.Size = new System.Drawing.Size(87, 92);
             this.infoLabel4.TabIndex = 6;
             this.infoLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -211,9 +162,9 @@
             // 
             this.infoText3.AutoSize = true;
             this.infoText3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.infoText3.Location = new System.Drawing.Point(96, 172);
+            this.infoText3.Location = new System.Drawing.Point(96, 184);
             this.infoText3.Name = "infoText3";
-            this.infoText3.Size = new System.Drawing.Size(214, 86);
+            this.infoText3.Size = new System.Drawing.Size(214, 92);
             this.infoText3.TabIndex = 5;
             this.infoText3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -221,9 +172,9 @@
             // 
             this.infoLabel3.AutoSize = true;
             this.infoLabel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.infoLabel3.Location = new System.Drawing.Point(3, 172);
+            this.infoLabel3.Location = new System.Drawing.Point(3, 184);
             this.infoLabel3.Name = "infoLabel3";
-            this.infoLabel3.Size = new System.Drawing.Size(87, 86);
+            this.infoLabel3.Size = new System.Drawing.Size(87, 92);
             this.infoLabel3.TabIndex = 4;
             this.infoLabel3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -231,9 +182,9 @@
             // 
             this.infoText2.AutoSize = true;
             this.infoText2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.infoText2.Location = new System.Drawing.Point(96, 86);
+            this.infoText2.Location = new System.Drawing.Point(96, 92);
             this.infoText2.Name = "infoText2";
-            this.infoText2.Size = new System.Drawing.Size(214, 86);
+            this.infoText2.Size = new System.Drawing.Size(214, 92);
             this.infoText2.TabIndex = 3;
             this.infoText2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -241,9 +192,9 @@
             // 
             this.infoLabel2.AutoSize = true;
             this.infoLabel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.infoLabel2.Location = new System.Drawing.Point(3, 86);
+            this.infoLabel2.Location = new System.Drawing.Point(3, 92);
             this.infoLabel2.Name = "infoLabel2";
-            this.infoLabel2.Size = new System.Drawing.Size(87, 86);
+            this.infoLabel2.Size = new System.Drawing.Size(87, 92);
             this.infoLabel2.TabIndex = 2;
             this.infoLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -253,7 +204,7 @@
             this.infoText1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.infoText1.Location = new System.Drawing.Point(96, 0);
             this.infoText1.Name = "infoText1";
-            this.infoText1.Size = new System.Drawing.Size(214, 86);
+            this.infoText1.Size = new System.Drawing.Size(214, 92);
             this.infoText1.TabIndex = 1;
             this.infoText1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -263,7 +214,7 @@
             this.infoLabel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.infoLabel1.Location = new System.Drawing.Point(3, 0);
             this.infoLabel1.Name = "infoLabel1";
-            this.infoLabel1.Size = new System.Drawing.Size(87, 86);
+            this.infoLabel1.Size = new System.Drawing.Size(87, 92);
             this.infoLabel1.TabIndex = 0;
             this.infoLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -274,7 +225,7 @@
             this.downloadButton.ForeColor = System.Drawing.Color.DarkCyan;
             this.downloadButton.Location = new System.Drawing.Point(3, 3);
             this.downloadButton.Name = "downloadButton";
-            this.downloadButton.Size = new System.Drawing.Size(313, 81);
+            this.downloadButton.Size = new System.Drawing.Size(313, 87);
             this.downloadButton.TabIndex = 1;
             this.downloadButton.Text = "Download";
             this.downloadButton.UseVisualStyleBackColor = true;
@@ -285,7 +236,7 @@
             this.informationLabel.AutoSize = true;
             this.informationLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.informationLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.informationLabel.Location = new System.Drawing.Point(3, 87);
+            this.informationLabel.Location = new System.Drawing.Point(3, 93);
             this.informationLabel.Name = "informationLabel";
             this.informationLabel.Size = new System.Drawing.Size(313, 40);
             this.informationLabel.TabIndex = 2;
@@ -301,19 +252,57 @@
             this.statusLabel.Size = new System.Drawing.Size(976, 20);
             this.statusLabel.TabIndex = 4;
             // 
+            // mainMenu1
+            // 
+            this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem1});
+            // 
+            // menuItem1
+            // 
+            this.menuItem1.Index = 0;
+            this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem2,
+            this.menuItem3,
+            this.menuItem4,
+            this.menuItem5});
+            this.menuItem1.Text = "Commands";
+            this.menuItem1.Click += new System.EventHandler(this.menuItem1_Click);
+            // 
+            // menuItem2
+            // 
+            this.menuItem2.Index = 0;
+            this.menuItem2.Text = "Login";
+            this.menuItem2.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
+            // 
+            // menuItem3
+            // 
+            this.menuItem3.Index = 1;
+            this.menuItem3.Text = "Output Directory...";
+            this.menuItem3.Click += new System.EventHandler(this.outputDirectoryToolStripMenuItem_Click);
+            // 
+            // menuItem4
+            // 
+            this.menuItem4.Index = 2;
+            this.menuItem4.Text = "Refresh Content";
+            this.menuItem4.Click += new System.EventHandler(this.refreshContentToolStripMenuItem_Click);
+            // 
+            // menuItem5
+            // 
+            this.menuItem5.Index = 3;
+            this.menuItem5.Text = "View Log";
+            this.menuItem5.Click += new System.EventHandler(this.viewLogToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(982, 553);
             this.Controls.Add(this.mainTableLayout);
-            this.MainMenuStrip = this.menuStrip;
+            this.Menu = this.mainMenu1;
             this.Name = "MainForm";
             this.Text = "Blackboard Downloader";
             this.mainTableLayout.ResumeLayout(false);
             this.mainTableLayout.PerformLayout();
-            this.menuStrip.ResumeLayout(false);
-            this.menuStrip.PerformLayout();
             this.rightTableLayoutPanel.ResumeLayout(false);
             this.rightTableLayoutPanel.PerformLayout();
             this.informationTableLayout.ResumeLayout(false);
@@ -326,12 +315,6 @@
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel mainTableLayout;
-        private System.Windows.Forms.MenuStrip menuStrip;
-        private System.Windows.Forms.ToolStripMenuItem commandsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loginToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem refreshContentToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem outputDirectoryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem viewLogToolStripMenuItem;
         private System.Windows.Forms.Label yourModulesLabel;
         private System.Windows.Forms.TreeView contentTree;
         private System.Windows.Forms.TableLayoutPanel rightTableLayoutPanel;
@@ -347,5 +330,11 @@
         private System.Windows.Forms.Label infoLabel2;
         private System.Windows.Forms.Label infoText1;
         private System.Windows.Forms.Label infoLabel1;
+        private System.Windows.Forms.MainMenu mainMenu1;
+        private System.Windows.Forms.MenuItem menuItem1;
+        private System.Windows.Forms.MenuItem menuItem2;
+        private System.Windows.Forms.MenuItem menuItem3;
+        private System.Windows.Forms.MenuItem menuItem4;
+        private System.Windows.Forms.MenuItem menuItem5;
     }
 }

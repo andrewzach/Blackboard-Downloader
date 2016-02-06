@@ -60,6 +60,11 @@ namespace BlackboardDownloader
             }
         }
 
+        public string GetLogFilePath()
+        {
+            return exePath + "\\" + filename;
+        }
+
         public void WriteException(Exception e)
         {
             Write(e.GetType() + ": " + e.Message);
