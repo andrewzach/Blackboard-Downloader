@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.ComponentModel;
 
 namespace BlackboardDownloader
 {
@@ -127,6 +128,19 @@ namespace BlackboardDownloader
             foreach(BbModule m in webData.Modules)
             {
                 PopulateModuleContent(m);
+            }
+        }
+
+        // Reports progress to GUI using the BackgroundWorker
+        public void PopulateAllData(BackgroundWorker worker)
+        {
+            PopulateModules();  // scrapes list of modules available
+            int moduleCounter = 0;
+            foreach (BbModule m in webData.Modules)
+            {
+                worker.ReportProgress(moduleCounter / webData.Modules.Count, "Populating content for " + m.Name + " ( " + (moduleCounter + 1) + " of " + (webData.Modules.Count + 1) + " )");
+                PopulateModuleContent(m);
+                moduleCounter++;
             }
         }
 

@@ -51,6 +51,8 @@
             this.outputMenuItem = new System.Windows.Forms.MenuItem();
             this.refreshMenuItem = new System.Windows.Forms.MenuItem();
             this.viewLogMenuItem = new System.Windows.Forms.MenuItem();
+            this.menuItem1 = new System.Windows.Forms.MenuItem();
+            this.menuItem2 = new System.Windows.Forms.MenuItem();
             this.mainTableLayout.SuspendLayout();
             this.rightTableLayoutPanel.SuspendLayout();
             this.informationTableLayout.SuspendLayout();
@@ -91,8 +93,11 @@
             // contentTree
             // 
             this.contentTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.contentTree.FullRowSelect = true;
+            this.contentTree.ItemHeight = 24;
             this.contentTree.Location = new System.Drawing.Point(3, 23);
             this.contentTree.Name = "contentTree";
+            this.contentTree.ShowLines = false;
             this.contentTree.Size = new System.Drawing.Size(651, 507);
             this.contentTree.TabIndex = 2;
             this.contentTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.contentTree_AfterSelect);
@@ -255,7 +260,8 @@
             // mainMenu1
             // 
             this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.commandsMenuItem});
+            this.commandsMenuItem,
+            this.menuItem1});
             // 
             // commandsMenuItem
             // 
@@ -292,6 +298,18 @@
             this.viewLogMenuItem.Text = "View Log";
             this.viewLogMenuItem.Click += new System.EventHandler(this.viewLogMenuItem_Click);
             // 
+            // menuItem1
+            // 
+            this.menuItem1.Index = 1;
+            this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem2});
+            this.menuItem1.Text = "Help";
+            // 
+            // menuItem2
+            // 
+            this.menuItem2.Index = 0;
+            this.menuItem2.Text = "About";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -301,6 +319,8 @@
             this.Menu = this.mainMenu1;
             this.Name = "MainForm";
             this.Text = "Blackboard Downloader";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.mainTableLayout.ResumeLayout(false);
             this.mainTableLayout.PerformLayout();
             this.rightTableLayoutPanel.ResumeLayout(false);
@@ -336,5 +356,7 @@
         private System.Windows.Forms.MenuItem outputMenuItem;
         private System.Windows.Forms.MenuItem refreshMenuItem;
         private System.Windows.Forms.MenuItem viewLogMenuItem;
+        private System.Windows.Forms.MenuItem menuItem1;
+        private System.Windows.Forms.MenuItem menuItem2;
     }
 }
