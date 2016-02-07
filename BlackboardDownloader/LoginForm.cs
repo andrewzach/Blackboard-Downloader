@@ -74,6 +74,7 @@ namespace BlackboardDownloader
         private void quitButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Abort;
+            this.Close();
         }
     }
 }

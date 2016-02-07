@@ -138,7 +138,7 @@ namespace BlackboardDownloader
             int moduleCounter = 0;
             foreach (BbModule m in webData.Modules)
             {
-                worker.ReportProgress(moduleCounter / webData.Modules.Count, "Populating content for " + m.Name + " ( " + (moduleCounter + 1) + " of " + (webData.Modules.Count + 1) + " )");
+                worker.ReportProgress(moduleCounter / webData.Modules.Count, "Populating content for " + m.Name + " ( " + (moduleCounter + 1) + " of " + webData.Modules.Count + " )");
                 PopulateModuleContent(m);
                 moduleCounter++;
             }

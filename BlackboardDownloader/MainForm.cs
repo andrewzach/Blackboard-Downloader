@@ -115,7 +115,7 @@ namespace BlackboardDownloader
             infoText1.ResetText();
             infoText2.ResetText();
             infoText3.ResetText();
-            infoText4.ResetText();
+            infoTextLink.ResetText();
         }
 
         // Event Handler for the content treeview. Changes information displayed 
@@ -135,7 +135,7 @@ namespace BlackboardDownloader
                 infoLabel3.Text = "Link Type";
                 infoText3.Text = file.LinkType;
                 infoLabel4.Text = "URL";
-                infoText4.Text = file.Url.AbsoluteUri;
+                infoTextLink.Text = file.Url.AbsoluteUri;
             }
             // Folder selected
             else if (contentTree.SelectedNode.Tag.GetType() == typeof(BbContentDirectory))
@@ -148,7 +148,7 @@ namespace BlackboardDownloader
                 infoLabel3.Text = "Files";
                 infoText3.Text = folder.CountAllFiles().ToString();
                 infoLabel4.Text = "URL";
-                infoText4.Text = folder.Url.AbsoluteUri;
+                infoTextLink.Text = folder.Url.AbsoluteUri;
             }
 
             // Module selected
@@ -162,7 +162,7 @@ namespace BlackboardDownloader
                 infoLabel3.Text = "Files";
                 infoText3.Text = module.Content.CountAllFiles().ToString();
                 infoLabel4.Text = "URL";
-                infoText4.Text = module.Url.AbsoluteUri;
+                infoTextLink.Text = module.Url.AbsoluteUri;
             }
         }
 
@@ -177,13 +177,13 @@ namespace BlackboardDownloader
             while (!scraper.initialized)     
             {
                 // If user chose to quit the program
-                if (result == DialogResult.Abort)
+                if (result == DialogResult.Abort || result == DialogResult.Cancel)
                 {
                     this.Close();
                     return;
                 }
                 statusLabel.Text = "Login not successful. Re-opening login form.";
-                loginForm.ShowDialog();
+                result = loginForm.ShowDialog();
             }
             statusLabel.ResetText();
         }
