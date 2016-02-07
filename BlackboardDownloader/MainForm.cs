@@ -58,27 +58,32 @@ namespace BlackboardDownloader
             contentTree.Nodes.Clear(); // Clear any existing tree nodes
             foreach (BbModule module in scraper.webData.Modules)
             {
-                // Create a root node for the module
-                TreeNode moduleNode = new TreeNode(module.Name);
-                moduleNode.Tag = module;
-                Font moduleFont = new Font(new FontFamily("Segoe UI Semibold"), 16, FontStyle.Regular, GraphicsUnit.Pixel);
-                moduleNode.NodeFont = moduleFont;
-                moduleNode.BackColor = Color.AliceBlue;
-
-                // Populate module subfolders
-                foreach (BbContentDirectory subFolder in module.Content.SubFolders)
-                {
-                    PopulateTreeFolder(moduleNode, subFolder);
-                }
-                // Populate files in module's main content folder
-                foreach (BbContentItem file in module.Content.Files)
-                {
-                    AddTreeFile(moduleNode, file);
-                }
-                // Add module nodes to tree
-                contentTree.Nodes.Add(moduleNode);
-                moduleNode.Text = moduleNode.Text; // Forces re-draw to fix text truncating issue
+                PopulateTreeModule(module);   
             }
+        }
+
+        private void PopulateTreeModule(BbModule module)
+        {
+            // Create a root node for the module
+            TreeNode moduleNode = new TreeNode(module.Name);
+            moduleNode.Tag = module;
+            Font moduleFont = new Font(new FontFamily("Segoe UI Semibold"), 16, FontStyle.Regular, GraphicsUnit.Pixel);
+            moduleNode.NodeFont = moduleFont;
+            moduleNode.BackColor = Color.AliceBlue;
+
+            // Populate module subfolders
+            foreach (BbContentDirectory subFolder in module.Content.SubFolders)
+            {
+                PopulateTreeFolder(moduleNode, subFolder);
+            }
+            // Populate files in module's main content folder
+            foreach (BbContentItem file in module.Content.Files)
+            {
+                AddTreeFile(moduleNode, file);
+            }
+            // Add module nodes to tree
+            contentTree.Nodes.Add(moduleNode);
+            moduleNode.Text = moduleNode.Text; // Forces re-draw to fix text truncating issue
         }
 
         // Adds given folder to the content TreeView. Adds folder's node to parent node.
@@ -143,10 +148,10 @@ namespace BlackboardDownloader
                 BbContentDirectory folder = contentTree.SelectedNode.Tag as BbContentDirectory;
                 infoLabel1.Text = "Name";
                 infoText1.Text = folder.Name;
-                infoLabel2.Text = "Subfolders";
-                infoText2.Text = folder.SubFolders.Count.ToString();
-                infoLabel3.Text = "Files";
-                infoText3.Text = folder.CountAllFiles().ToString();
+                infoLabel2.Text = "Files";
+                infoText2.Text = folder.CountAllFiles().ToString();
+                infoLabel3.Text = "Subfolders";
+                infoText3.Text = folder.SubFolders.Count.ToString();
                 infoLabel4.Text = "URL";
                 infoTextLink.Text = folder.Url.AbsoluteUri;
             }
@@ -157,10 +162,10 @@ namespace BlackboardDownloader
                 BbModule module = contentTree.SelectedNode.Tag as BbModule;
                 infoLabel1.Text = "Name";
                 infoText1.Text = module.Name;
-                infoLabel2.Text = "Subfolders";
-                infoText2.Text = module.Content.SubFolders.Count.ToString();
-                infoLabel3.Text = "Files";
-                infoText3.Text = module.Content.CountAllFiles().ToString();
+                infoLabel2.Text = "Files";
+                infoText2.Text = module.Content.CountAllFiles().ToString();
+                infoLabel3.Text = "Subfolders";
+                infoText3.Text = module.Content.SubFolders.Count.ToString();
                 infoLabel4.Text = "URL";
                 infoTextLink.Text = module.Url.AbsoluteUri;
             }
@@ -296,7 +301,8 @@ namespace BlackboardDownloader
             {
                 BbModule module = selectedNode.Tag as BbModule;
                 StartFileCounter(module.Content);
-                DownloadFolder(module.Content, scraper.OutputDirectory, worker);
+                string outputDirectory = scraper.OutputDirectory + BbUtils.CleanDirectory(module.Name) + "\\";
+                DownloadFolder(module.Content, outputDirectory, worker);
             }
             // Single folder selected
             else if (selectedNode.Tag.GetType() == typeof(BbContentDirectory))
@@ -373,7 +379,15 @@ namespace BlackboardDownloader
         // A string to be displayed in the statusLabel is passed in as the event args UserState
         private void PopulateContentBW_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            statusLabel.Text = e.UserState as string;
+            if (e.UserState.GetType() == typeof(BbModule))
+            {
+                PopulateTreeModule(e.UserState as BbModule);
+            }
+            else if (e.UserState.GetType() == typeof(string))
+            {
+                statusLabel.Text = e.UserState as string;
+            }
+            
         }
 
         // RunWorkerCompleted event handler for PopulateContent Backgroundworker
