@@ -29,9 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.mainTableLayout = new System.Windows.Forms.TableLayoutPanel();
-            this.yourModulesLabel = new System.Windows.Forms.Label();
-            this.contentTree = new System.Windows.Forms.TreeView();
+            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
+            this.commandsMenuItem = new System.Windows.Forms.MenuItem();
+            this.loginMenuItem = new System.Windows.Forms.MenuItem();
+            this.outputMenuItem = new System.Windows.Forms.MenuItem();
+            this.refreshMenuItem = new System.Windows.Forms.MenuItem();
+            this.viewLogMenuItem = new System.Windows.Forms.MenuItem();
+            this.menuItem1 = new System.Windows.Forms.MenuItem();
+            this.aboutMenuItem = new System.Windows.Forms.MenuItem();
             this.rightTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.downloadButton = new System.Windows.Forms.Button();
             this.infoGroupBox = new System.Windows.Forms.GroupBox();
@@ -44,64 +49,69 @@
             this.infoLabel1 = new System.Windows.Forms.Label();
             this.infoText1 = new System.Windows.Forms.Label();
             this.infoTextLink = new System.Windows.Forms.LinkLabel();
+            this.contentTree = new System.Windows.Forms.TreeView();
+            this.yourModulesLabel = new System.Windows.Forms.Label();
+            this.mainTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.statusLabel = new System.Windows.Forms.Label();
-            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
-            this.commandsMenuItem = new System.Windows.Forms.MenuItem();
-            this.loginMenuItem = new System.Windows.Forms.MenuItem();
-            this.outputMenuItem = new System.Windows.Forms.MenuItem();
-            this.refreshMenuItem = new System.Windows.Forms.MenuItem();
-            this.viewLogMenuItem = new System.Windows.Forms.MenuItem();
-            this.menuItem1 = new System.Windows.Forms.MenuItem();
-            this.menuItem2 = new System.Windows.Forms.MenuItem();
-            this.mainTableLayout.SuspendLayout();
+            this.horizontalLineLabel = new System.Windows.Forms.Label();
             this.rightTableLayoutPanel.SuspendLayout();
             this.infoGroupBox.SuspendLayout();
             this.informationTableLayout.SuspendLayout();
+            this.mainTableLayout.SuspendLayout();
             this.SuspendLayout();
             // 
-            // mainTableLayout
+            // mainMenu1
             // 
-            this.mainTableLayout.AutoSize = true;
-            this.mainTableLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.mainTableLayout.ColumnCount = 2;
-            this.mainTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67F));
-            this.mainTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
-            this.mainTableLayout.Controls.Add(this.yourModulesLabel, 0, 0);
-            this.mainTableLayout.Controls.Add(this.contentTree, 0, 1);
-            this.mainTableLayout.Controls.Add(this.rightTableLayoutPanel, 1, 1);
-            this.mainTableLayout.Controls.Add(this.statusLabel, 0, 2);
-            this.mainTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainTableLayout.Location = new System.Drawing.Point(0, 0);
-            this.mainTableLayout.Name = "mainTableLayout";
-            this.mainTableLayout.RowCount = 3;
-            this.mainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.mainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.mainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.mainTableLayout.Size = new System.Drawing.Size(982, 447);
-            this.mainTableLayout.TabIndex = 0;
+            this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.commandsMenuItem,
+            this.menuItem1});
             // 
-            // yourModulesLabel
+            // commandsMenuItem
             // 
-            this.yourModulesLabel.AutoSize = true;
-            this.mainTableLayout.SetColumnSpan(this.yourModulesLabel, 2);
-            this.yourModulesLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.yourModulesLabel.Location = new System.Drawing.Point(3, 0);
-            this.yourModulesLabel.Name = "yourModulesLabel";
-            this.yourModulesLabel.Size = new System.Drawing.Size(976, 20);
-            this.yourModulesLabel.TabIndex = 1;
-            this.yourModulesLabel.Text = "Your Modules";
+            this.commandsMenuItem.Index = 0;
+            this.commandsMenuItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.loginMenuItem,
+            this.outputMenuItem,
+            this.refreshMenuItem,
+            this.viewLogMenuItem});
+            this.commandsMenuItem.Text = "Commands";
             // 
-            // contentTree
+            // loginMenuItem
             // 
-            this.contentTree.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.contentTree.FullRowSelect = true;
-            this.contentTree.ItemHeight = 24;
-            this.contentTree.Location = new System.Drawing.Point(3, 23);
-            this.contentTree.Name = "contentTree";
-            this.contentTree.ShowLines = false;
-            this.contentTree.Size = new System.Drawing.Size(651, 401);
-            this.contentTree.TabIndex = 2;
-            this.contentTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.contentTree_AfterSelect);
+            this.loginMenuItem.Index = 0;
+            this.loginMenuItem.Text = "Login";
+            this.loginMenuItem.Click += new System.EventHandler(this.loginMenuItem_Click);
+            // 
+            // outputMenuItem
+            // 
+            this.outputMenuItem.Index = 1;
+            this.outputMenuItem.Text = "Output Directory...";
+            this.outputMenuItem.Click += new System.EventHandler(this.outputMenuItem_Click);
+            // 
+            // refreshMenuItem
+            // 
+            this.refreshMenuItem.Index = 2;
+            this.refreshMenuItem.Text = "Refresh Content";
+            this.refreshMenuItem.Click += new System.EventHandler(this.refreshMenuItem_Click);
+            // 
+            // viewLogMenuItem
+            // 
+            this.viewLogMenuItem.Index = 3;
+            this.viewLogMenuItem.Text = "View Log";
+            this.viewLogMenuItem.Click += new System.EventHandler(this.viewLogMenuItem_Click);
+            // 
+            // menuItem1
+            // 
+            this.menuItem1.Index = 1;
+            this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.aboutMenuItem});
+            this.menuItem1.Text = "Help";
+            // 
+            // aboutMenuItem
+            // 
+            this.aboutMenuItem.Index = 0;
+            this.aboutMenuItem.Text = "About";
+            this.aboutMenuItem.Click += new System.EventHandler(this.aboutMenuItem_Click);
             // 
             // rightTableLayoutPanel
             // 
@@ -110,12 +120,12 @@
             this.rightTableLayoutPanel.Controls.Add(this.downloadButton, 0, 0);
             this.rightTableLayoutPanel.Controls.Add(this.infoGroupBox, 0, 1);
             this.rightTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rightTableLayoutPanel.Location = new System.Drawing.Point(660, 23);
+            this.rightTableLayoutPanel.Location = new System.Drawing.Point(660, 24);
             this.rightTableLayoutPanel.Name = "rightTableLayoutPanel";
             this.rightTableLayoutPanel.RowCount = 2;
             this.rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 15.78947F));
             this.rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 84.21053F));
-            this.rightTableLayoutPanel.Size = new System.Drawing.Size(319, 401);
+            this.rightTableLayoutPanel.Size = new System.Drawing.Size(319, 400);
             this.rightTableLayoutPanel.TabIndex = 3;
             // 
             // downloadButton
@@ -139,7 +149,7 @@
             this.infoGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.infoGroupBox.Location = new System.Drawing.Point(3, 66);
             this.infoGroupBox.Name = "infoGroupBox";
-            this.infoGroupBox.Size = new System.Drawing.Size(313, 332);
+            this.infoGroupBox.Size = new System.Drawing.Size(313, 331);
             this.infoGroupBox.TabIndex = 2;
             this.infoGroupBox.TabStop = false;
             this.infoGroupBox.Text = "Information";
@@ -168,7 +178,7 @@
             this.informationTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.informationTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.informationTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 30F));
-            this.informationTableLayout.Size = new System.Drawing.Size(307, 303);
+            this.informationTableLayout.Size = new System.Drawing.Size(307, 302);
             this.informationTableLayout.TabIndex = 1;
             // 
             // infoText3
@@ -260,8 +270,56 @@
             this.infoTextLink.Location = new System.Drawing.Point(3, 240);
             this.infoTextLink.Name = "infoTextLink";
             this.infoTextLink.Padding = new System.Windows.Forms.Padding(5);
-            this.infoTextLink.Size = new System.Drawing.Size(301, 63);
+            this.infoTextLink.Size = new System.Drawing.Size(301, 62);
             this.infoTextLink.TabIndex = 10;
+            this.infoTextLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.infoTextLink_LinkClicked);
+            // 
+            // contentTree
+            // 
+            this.contentTree.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.contentTree.FullRowSelect = true;
+            this.contentTree.ItemHeight = 24;
+            this.contentTree.Location = new System.Drawing.Point(3, 24);
+            this.contentTree.Name = "contentTree";
+            this.contentTree.ShowLines = false;
+            this.contentTree.Size = new System.Drawing.Size(651, 400);
+            this.contentTree.TabIndex = 2;
+            this.contentTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.contentTree_AfterSelect);
+            // 
+            // yourModulesLabel
+            // 
+            this.yourModulesLabel.AutoSize = true;
+            this.mainTableLayout.SetColumnSpan(this.yourModulesLabel, 2);
+            this.yourModulesLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.yourModulesLabel.Location = new System.Drawing.Point(3, 1);
+            this.yourModulesLabel.Name = "yourModulesLabel";
+            this.yourModulesLabel.Size = new System.Drawing.Size(976, 20);
+            this.yourModulesLabel.TabIndex = 1;
+            this.yourModulesLabel.Text = "Your Modules";
+            this.yourModulesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // mainTableLayout
+            // 
+            this.mainTableLayout.AutoSize = true;
+            this.mainTableLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.mainTableLayout.ColumnCount = 2;
+            this.mainTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 67F));
+            this.mainTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33F));
+            this.mainTableLayout.Controls.Add(this.yourModulesLabel, 0, 1);
+            this.mainTableLayout.Controls.Add(this.contentTree, 0, 2);
+            this.mainTableLayout.Controls.Add(this.rightTableLayoutPanel, 1, 2);
+            this.mainTableLayout.Controls.Add(this.statusLabel, 0, 3);
+            this.mainTableLayout.Controls.Add(this.horizontalLineLabel, 0, 0);
+            this.mainTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainTableLayout.Location = new System.Drawing.Point(0, 0);
+            this.mainTableLayout.Name = "mainTableLayout";
+            this.mainTableLayout.RowCount = 4;
+            this.mainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 1F));
+            this.mainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.mainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.mainTableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.mainTableLayout.Size = new System.Drawing.Size(982, 447);
+            this.mainTableLayout.TabIndex = 0;
             // 
             // statusLabel
             // 
@@ -273,58 +331,17 @@
             this.statusLabel.Size = new System.Drawing.Size(976, 20);
             this.statusLabel.TabIndex = 4;
             // 
-            // mainMenu1
+            // horizontalLineLabel
             // 
-            this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.commandsMenuItem,
-            this.menuItem1});
-            // 
-            // commandsMenuItem
-            // 
-            this.commandsMenuItem.Index = 0;
-            this.commandsMenuItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.loginMenuItem,
-            this.outputMenuItem,
-            this.refreshMenuItem,
-            this.viewLogMenuItem});
-            this.commandsMenuItem.Text = "Commands";
-            this.commandsMenuItem.Click += new System.EventHandler(this.commandsMenuItem_Click);
-            // 
-            // loginMenuItem
-            // 
-            this.loginMenuItem.Index = 0;
-            this.loginMenuItem.Text = "Login";
-            this.loginMenuItem.Click += new System.EventHandler(this.loginMenuItem_Click);
-            // 
-            // outputMenuItem
-            // 
-            this.outputMenuItem.Index = 1;
-            this.outputMenuItem.Text = "Output Directory...";
-            this.outputMenuItem.Click += new System.EventHandler(this.outputMenuItem_Click);
-            // 
-            // refreshMenuItem
-            // 
-            this.refreshMenuItem.Index = 2;
-            this.refreshMenuItem.Text = "Refresh Content";
-            this.refreshMenuItem.Click += new System.EventHandler(this.refreshMenuItem_Click);
-            // 
-            // viewLogMenuItem
-            // 
-            this.viewLogMenuItem.Index = 3;
-            this.viewLogMenuItem.Text = "View Log";
-            this.viewLogMenuItem.Click += new System.EventHandler(this.viewLogMenuItem_Click);
-            // 
-            // menuItem1
-            // 
-            this.menuItem1.Index = 1;
-            this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItem2});
-            this.menuItem1.Text = "Help";
-            // 
-            // menuItem2
-            // 
-            this.menuItem2.Index = 0;
-            this.menuItem2.Text = "About";
+            this.horizontalLineLabel.AutoSize = true;
+            this.horizontalLineLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.mainTableLayout.SetColumnSpan(this.horizontalLineLabel, 2);
+            this.horizontalLineLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.horizontalLineLabel.Location = new System.Drawing.Point(0, 0);
+            this.horizontalLineLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.horizontalLineLabel.Name = "horizontalLineLabel";
+            this.horizontalLineLabel.Size = new System.Drawing.Size(982, 1);
+            this.horizontalLineLabel.TabIndex = 5;
             // 
             // MainForm
             // 
@@ -337,25 +354,18 @@
             this.Text = "Blackboard Downloader";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
-            this.mainTableLayout.ResumeLayout(false);
-            this.mainTableLayout.PerformLayout();
             this.rightTableLayoutPanel.ResumeLayout(false);
             this.infoGroupBox.ResumeLayout(false);
             this.informationTableLayout.ResumeLayout(false);
             this.informationTableLayout.PerformLayout();
+            this.mainTableLayout.ResumeLayout(false);
+            this.mainTableLayout.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.TableLayoutPanel mainTableLayout;
-        private System.Windows.Forms.Label yourModulesLabel;
-        private System.Windows.Forms.TreeView contentTree;
-        private System.Windows.Forms.TableLayoutPanel rightTableLayoutPanel;
-        private System.Windows.Forms.Button downloadButton;
-        private System.Windows.Forms.Label statusLabel;
         private System.Windows.Forms.MainMenu mainMenu1;
         private System.Windows.Forms.MenuItem commandsMenuItem;
         private System.Windows.Forms.MenuItem loginMenuItem;
@@ -363,7 +373,12 @@
         private System.Windows.Forms.MenuItem refreshMenuItem;
         private System.Windows.Forms.MenuItem viewLogMenuItem;
         private System.Windows.Forms.MenuItem menuItem1;
-        private System.Windows.Forms.MenuItem menuItem2;
+        private System.Windows.Forms.MenuItem aboutMenuItem;
+        private System.Windows.Forms.TableLayoutPanel mainTableLayout;
+        private System.Windows.Forms.Label yourModulesLabel;
+        private System.Windows.Forms.TreeView contentTree;
+        private System.Windows.Forms.TableLayoutPanel rightTableLayoutPanel;
+        private System.Windows.Forms.Button downloadButton;
         private System.Windows.Forms.GroupBox infoGroupBox;
         private System.Windows.Forms.TableLayoutPanel informationTableLayout;
         private System.Windows.Forms.Label infoText3;
@@ -374,5 +389,7 @@
         private System.Windows.Forms.Label infoLabel1;
         private System.Windows.Forms.Label infoText1;
         private System.Windows.Forms.LinkLabel infoTextLink;
+        private System.Windows.Forms.Label horizontalLineLabel;
+        private System.Windows.Forms.Label statusLabel;
     }
 }

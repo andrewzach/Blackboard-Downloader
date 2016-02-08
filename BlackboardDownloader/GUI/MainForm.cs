@@ -35,10 +35,13 @@ namespace BlackboardDownloader
         private void Initialize()
         {
             scraper = new Scraper();
+
+            // Login
             ShowLoginFormDialog();
 
             //Populate Content
-            if (scraper.LoadData())
+            bool dataLoaded = scraper.LoadData();
+            if (dataLoaded)
             {
                 statusLabel.Text = "Content loaded from previous session.";
                 PopulateTreeView();
@@ -202,10 +205,6 @@ namespace BlackboardDownloader
             Initialize();
         }
 
-        // Refresh Content
-        // Re-populate all content from Blackboard. This can take several minutes.
-        
-
         // View Log
         // Opens the porgram's log file for user to browse. 
         private void viewLogMenuItem_Click(object sender, EventArgs e)
@@ -229,8 +228,13 @@ namespace BlackboardDownloader
             }
         }
 
-        // Commands
-        private void commandsMenuItem_Click(object sender, EventArgs e) { }
+        // About
+        // Opens the About dialog, displaying information on the program
+        private void aboutMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutBox aboutDialog = new AboutBox();
+            aboutDialog.ShowDialog();
+        }
 
         // -- DOWNLOAD FILES --
 
@@ -344,11 +348,6 @@ namespace BlackboardDownloader
             }
         }
 
-        private void refreshMenuItem_Click(object sender, EventArgs e)
-        {
-            PopulateContent();
-        }
-
         // -- POPULATE CONTENT --
 
         // Searches for content on Blackboard and populates modules/folders/files
@@ -413,6 +412,20 @@ namespace BlackboardDownloader
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             scraper.SaveData();
+        }
+
+        // Refresh Content
+        // Re-populate all content from Blackboard. This can take several minutes.
+        private void refreshMenuItem_Click(object sender, EventArgs e)
+        {
+            PopulateContent();
+        }
+
+        // URL info box - opens hyperlinks in default browser when clicked
+        private void infoTextLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            this.infoTextLink.LinkVisited = true;
+            System.Diagnostics.Process.Start(infoTextLink.Text);
         }
     }
 }

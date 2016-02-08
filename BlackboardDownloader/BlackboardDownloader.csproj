@@ -85,23 +85,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BbContentDirectory.cs" />
-    <Compile Include="BbContentItem.cs" />
-    <Compile Include="BbData.cs" />
-    <Compile Include="BbModule.cs" />
-    <Compile Include="BbUtils.cs" />
-    <Compile Include="ConsoleUI.cs" />
-    <Compile Include="HTMLParser.cs" />
-    <Compile Include="LoginForm.cs">
+    <Compile Include="GUI\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LoginForm.Designer.cs">
+    <Compile Include="GUI\AboutBox.Designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\BbContentDirectory.cs" />
+    <Compile Include="Model\BbContentItem.cs" />
+    <Compile Include="Model\BbData.cs" />
+    <Compile Include="Model\BbModule.cs" />
+    <Compile Include="Utilities\BbUtils.cs" />
+    <Compile Include="ConsoleUI.cs" />
+    <Compile Include="Utilities\HTMLParser.cs" />
+    <Compile Include="GUI\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\LoginForm.Designer.cs">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainForm.cs">
+    <Compile Include="GUI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="GUI\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MainGUI.cs" />
@@ -111,7 +117,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Scraper.cs" />
+    <Compile Include="Controllers\Scraper.cs" />
     <Compile Include="WebClientEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -136,10 +142,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LoginForm.resx">
+    <EmbeddedResource Include="GUI\AboutBox.resx">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="GUI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
