@@ -63,6 +63,21 @@ namespace BlackboardDownloader
             subFolders.Add(s);
         }
 
+        // Counts all files in folder and all subfolders
+        public int CountAllFiles()
+        {
+            int fileCount = 0;
+            foreach (BbContentDirectory subFolder in SubFolders)
+            {
+                fileCount += subFolder.CountAllFiles();
+            }
+            foreach (BbContentItem file in Files)
+            {
+                fileCount++;
+            }
+            return fileCount;
+        }
+
         public override bool Equals(object other)
         {
             return Equals(other as BbContentDirectory);

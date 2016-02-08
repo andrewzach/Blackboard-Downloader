@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.ComponentModel;
 
 namespace BlackboardDownloader
 {
@@ -19,11 +20,11 @@ namespace BlackboardDownloader
         public static string PORTAL = "https://dit-bb.blackboard.com";
         public static string MODID = "_25_1";
         private WebClientEx http;
-        private string outputDirectory;
-        private BbData webData;
+        public string outputDirectory;
+        public BbData webData;
         public bool initialized;
         private string cookieHeader;
-        private Logger log;
+        public Logger log;
 
         public Scraper()
         {
@@ -127,6 +128,20 @@ namespace BlackboardDownloader
             foreach(BbModule m in webData.Modules)
             {
                 PopulateModuleContent(m);
+            }
+        }
+
+        // Reports progress to GUI using the BackgroundWorker
+        public void PopulateAllData(BackgroundWorker worker)
+        {
+            PopulateModules();  // scrapes list of modules available
+            int moduleCounter = 0;
+            foreach (BbModule m in webData.Modules)
+            {
+                worker.ReportProgress(0, "Populating content for " + m.Name + " ( " + (moduleCounter + 1) + " of " + webData.Modules.Count + " )");
+                PopulateModuleContent(m);
+                worker.ReportProgress(0, m); // Pass module to GUI for updating the treeview
+                moduleCounter++;
             }
         }
 
@@ -289,7 +304,7 @@ namespace BlackboardDownloader
         }
 
         // Downloads a BbContentItem file and saves it to directory.
-        private void DownloadFile(BbContentItem file, string directory)
+        public void DownloadFile(BbContentItem file, string directory)
         {
             string shortDir = directory.Substring(outputDirectory.Length, directory.Length - outputDirectory.Length);
             try

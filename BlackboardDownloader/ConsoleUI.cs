@@ -11,36 +11,36 @@ namespace BlackboardDownloader
         public static Dictionary<char, string> menuOptions;
         public static Scraper scraper;
 
-        public static void Main(string[] args)
-        { 
-            DisplayWelcome();
-            Initialize();
-            menuOptions = new Dictionary<char, string>
-            {
-                { '1', "Download Content" },
-                { '2', "View Content" },
-                { '3', "Change Output Direcctory" },
-                { '4', "Check For New Content" },
-                { 'Q', "Quit" }
-            };
-            DisplayMenu();
-            char choice = GetMenuChoice();
-            while (choice != 'Q')
-            {
-                switch(choice)
-                {
-                    case '1': DownloadContent(); break;
-                    case '2': ViewContent(); break;
-                    case '3': ChangeOutputDir(); break;
-                    case '4': CheckNewContent(); break;
-                }
-                DisplayMenu();
-                choice = GetMenuChoice();
-            }
-            Console.WriteLine("Goodbye");
-            scraper.SaveData();
-            Console.ReadLine();
-        }
+        //public static void Main(string[] args)
+        //{ 
+        //    DisplayWelcome();
+        //    Initialize();
+        //    menuOptions = new Dictionary<char, string>
+        //    {
+        //        { '1', "Download Content" },
+        //        { '2', "View Content" },
+        //        { '3', "Change Output Direcctory" },
+        //        { '4', "Check For New Content" },
+        //        { 'Q', "Quit" }
+        //    };
+        //    DisplayMenu();
+        //    char choice = GetMenuChoice();
+        //    while (choice != 'Q')
+        //    {
+        //        switch(choice)
+        //        {
+        //            case '1': DownloadContent(); break;
+        //            case '2': ViewContent(); break;
+        //            case '3': ChangeOutputDir(); break;
+        //            case '4': CheckNewContent(); break;
+        //        }
+        //        DisplayMenu();
+        //        choice = GetMenuChoice();
+        //    }
+        //    Console.WriteLine("Goodbye");
+        //    scraper.SaveData();
+        //    Console.ReadLine();
+        //}
 
         public static void Initialize()
         {
