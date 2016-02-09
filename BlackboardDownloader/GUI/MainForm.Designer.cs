@@ -54,6 +54,7 @@
             this.mainTableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.statusLabel = new System.Windows.Forms.Label();
             this.horizontalLineLabel = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.rightTableLayoutPanel.SuspendLayout();
             this.infoGroupBox.SuspendLayout();
             this.informationTableLayout.SuspendLayout();
@@ -310,6 +311,7 @@
             this.mainTableLayout.Controls.Add(this.rightTableLayoutPanel, 1, 2);
             this.mainTableLayout.Controls.Add(this.statusLabel, 0, 3);
             this.mainTableLayout.Controls.Add(this.horizontalLineLabel, 0, 0);
+            this.mainTableLayout.Controls.Add(this.progressBar, 1, 3);
             this.mainTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainTableLayout.Location = new System.Drawing.Point(0, 0);
             this.mainTableLayout.Name = "mainTableLayout";
@@ -323,12 +325,12 @@
             // 
             // statusLabel
             // 
+            this.statusLabel.AutoEllipsis = true;
             this.statusLabel.AutoSize = true;
-            this.mainTableLayout.SetColumnSpan(this.statusLabel, 2);
             this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.statusLabel.Location = new System.Drawing.Point(3, 427);
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(976, 20);
+            this.statusLabel.Size = new System.Drawing.Size(651, 20);
             this.statusLabel.TabIndex = 4;
             // 
             // horizontalLineLabel
@@ -342,6 +344,15 @@
             this.horizontalLineLabel.Name = "horizontalLineLabel";
             this.horizontalLineLabel.Size = new System.Drawing.Size(982, 1);
             this.horizontalLineLabel.TabIndex = 5;
+            // 
+            // progressBar
+            // 
+            this.progressBar.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.progressBar.Location = new System.Drawing.Point(660, 430);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(319, 14);
+            this.progressBar.Step = 1;
+            this.progressBar.TabIndex = 6;
             // 
             // MainForm
             // 
@@ -391,5 +402,6 @@
         private System.Windows.Forms.LinkLabel infoTextLink;
         private System.Windows.Forms.Label horizontalLineLabel;
         private System.Windows.Forms.Label statusLabel;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }

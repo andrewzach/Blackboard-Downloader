@@ -83,7 +83,7 @@
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(376, 34);
-            this.tableLayoutPanel2.TabIndex = 5;
+            this.tableLayoutPanel2.TabIndex = 1;
             // 
             // quitButton
             // 
@@ -91,7 +91,7 @@
             this.quitButton.Location = new System.Drawing.Point(301, 3);
             this.quitButton.Name = "quitButton";
             this.quitButton.Size = new System.Drawing.Size(72, 28);
-            this.quitButton.TabIndex = 12;
+            this.quitButton.TabIndex = 1;
             this.quitButton.Text = "Cancel";
             this.quitButton.UseVisualStyleBackColor = true;
             this.quitButton.Click += new System.EventHandler(this.quitButton_Click);
@@ -102,7 +102,7 @@
             this.submitButton.Location = new System.Drawing.Point(227, 3);
             this.submitButton.Name = "submitButton";
             this.submitButton.Size = new System.Drawing.Size(68, 28);
-            this.submitButton.TabIndex = 10;
+            this.submitButton.TabIndex = 0;
             this.submitButton.Text = "OK";
             this.submitButton.UseVisualStyleBackColor = true;
             this.submitButton.Click += new System.EventHandler(this.SubmitButton_Click);
@@ -126,7 +126,7 @@
             this.welcomeLabel.Location = new System.Drawing.Point(3, 0);
             this.welcomeLabel.Name = "welcomeLabel";
             this.welcomeLabel.Size = new System.Drawing.Size(359, 20);
-            this.welcomeLabel.TabIndex = 0;
+            this.welcomeLabel.TabIndex = 10;
             this.welcomeLabel.Text = "Welcome! Please enter your Webcourses login";
             this.welcomeLabel.Click += new System.EventHandler(this.label1_Click);
             // 
@@ -138,7 +138,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(8);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(366, 107);
-            this.groupBox1.TabIndex = 6;
+            this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Login";
             // 
@@ -193,7 +193,7 @@
             this.usernameText.Location = new System.Drawing.Point(160, 9);
             this.usernameText.Name = "usernameText";
             this.usernameText.Size = new System.Drawing.Size(197, 24);
-            this.usernameText.TabIndex = 2;
+            this.usernameText.TabIndex = 0;
             // 
             // passwordText
             // 
@@ -203,7 +203,7 @@
             this.passwordText.Name = "passwordText";
             this.passwordText.PasswordChar = '*';
             this.passwordText.Size = new System.Drawing.Size(197, 24);
-            this.passwordText.TabIndex = 3;
+            this.passwordText.TabIndex = 1;
             // 
             // pictureBox1
             // 

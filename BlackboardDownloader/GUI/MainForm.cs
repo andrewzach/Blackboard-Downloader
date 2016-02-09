@@ -15,8 +15,6 @@ namespace BlackboardDownloader
         private Scraper scraper;
 
         // Counters to show status of download
-        private int currentFileCounter;
-        private int totalFileCount;
 
         public MainForm()
         {
@@ -67,6 +65,9 @@ namespace BlackboardDownloader
 
         private void PopulateTreeModule(BbModule module)
         {
+            // If module has not been populated with content, don't attempt to create tree.
+            if (!module.Initialized) return;
+
             // Create a root node for the module
             TreeNode moduleNode = new TreeNode(module.Name);
             moduleNode.Tag = module;
@@ -266,60 +267,34 @@ namespace BlackboardDownloader
             }
         }
 
-        // Downloads all files within a folder. Runs in a BackgroundWorker calling the DownloadBW_DoWork event.
-        // Files are downloaded to specified directory. 
-        // BackgroundWorker is referenced so that progress can be reported for each individual file 
-        public void DownloadFolder(BbContentDirectory folder, string directory, BackgroundWorker worker)
-        {
-            string shortDir = directory.Substring(scraper.outputDirectory.Length, directory.Length - scraper.outputDirectory.Length);
-            foreach (BbContentItem file in folder.Files)
-            {
-                currentFileCounter++;
-                worker.ReportProgress(currentFileCounter / totalFileCount, "Downloading file (" + file.LinkType + "): " + shortDir + file.Name + "( " + currentFileCounter + " of " + totalFileCount + " )");
-                scraper.DownloadFile(file, directory);
-            }
-            foreach (BbContentDirectory subFolder in folder.SubFolders)
-            {
-                DownloadFolder(subFolder, directory + BbUtils.CleanDirectory(subFolder.Name) + "\\", worker);   //Add subfolder name to directory
-            }
-        }
-
-        // Start a new file download counter for the given folder.
-        // Used to display download progress, eg. "Downloading sample.txt (5 of 36)"
-        private void StartFileCounter(BbContentDirectory folder)
-        {
-            currentFileCounter = 0;
-            totalFileCount = folder.CountAllFiles();
-        }
-
         // DoWork event handler for the file download BackgroundWorker. 
         // The selected TreeNode (either a module, folder, or file) is passed in the DoWorkEventArgs e
         private void DownloadBW_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             TreeNode selectedNode = e.Argument as TreeNode;
+            scraper.downloadProgress.BeginJob(worker);
 
             // -- DETERMINE TYPE OF NODE SELECTED --
             // Module selected
             if (selectedNode.Tag.GetType() == typeof(BbModule))
             {
                 BbModule module = selectedNode.Tag as BbModule;
-                StartFileCounter(module.Content);
-                string outputDirectory = scraper.OutputDirectory + BbUtils.CleanDirectory(module.Name) + "\\";
-                DownloadFolder(module.Content, outputDirectory, worker);
+                scraper.downloadProgress.totalWork = module.Content.CountAllFiles();
+                scraper.DownloadModuleFiles(module);
             }
             // Single folder selected
             else if (selectedNode.Tag.GetType() == typeof(BbContentDirectory))
             {
                 BbContentDirectory folder = selectedNode.Tag as BbContentDirectory;
-                StartFileCounter(folder);
-                DownloadFolder(folder, scraper.OutputDirectory, worker);
+                scraper.downloadProgress.totalWork = folder.CountAllFiles();
+                scraper.DownloadFolder(folder, scraper.OutputDirectory);
             }
             // Single file selected
             else if (selectedNode.Tag.GetType() == typeof(BbContentItem))
             {
                 BbContentItem file = selectedNode.Tag as BbContentItem;
-                worker.ReportProgress(0, "Downloading file (" + file.LinkType + "): " + file.Name);
+                scraper.downloadProgress.totalWork = 1;
                 scraper.DownloadFile(file);
             }
         }
@@ -329,6 +304,7 @@ namespace BlackboardDownloader
         private void DownloadBW_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             statusLabel.Text = e.UserState as string;
+            progressBar.Value = e.ProgressPercentage;
         }
 
         // Event handler for the download BackgroundWorker that runs after all downloads are completed
@@ -344,8 +320,15 @@ namespace BlackboardDownloader
             }
             else
             {
-                statusLabel.Text = "Done downloading " + totalFileCount + " files.";
+                progressBar.Value = 100;
+                statusLabel.Text = "Done downloading " + scraper.downloadProgress.totalWork + " files.";
+                if (scraper.downloadProgress.errorMessages.Count > 0)
+                {
+                    statusLabel.Text += " ( " + scraper.downloadProgress.errorMessages.Count + " errors )";
+                    statusLabel.Text += " View the log for more information.";
+                }
             }
+            scraper.downloadProgress.EndJob();
         }
 
         // -- POPULATE CONTENT --
@@ -371,13 +354,16 @@ namespace BlackboardDownloader
         // DoWork event handler for PopulateContent BackgroundWorker.
         private void PopulateContentBW_DoWork(object sender, DoWorkEventArgs e)
         {
-            scraper.PopulateAllData(sender as BackgroundWorker);
+            scraper.populateProgress.BeginJob(sender as BackgroundWorker);
+            scraper.PopulateAllData();
         }
 
         // ProgressChanged event handler for PopulateContent BackgroundWorker
         // A string to be displayed in the statusLabel is passed in as the event args UserState
         private void PopulateContentBW_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            progressBar.Value = e.ProgressPercentage;   // Update progress bar
+
             if (e.UserState.GetType() == typeof(BbModule))
             {
                 PopulateTreeModule(e.UserState as BbModule);
@@ -403,21 +389,35 @@ namespace BlackboardDownloader
             }
             else
             {
+                progressBar.Value = 100;
                 statusLabel.Text = "Done searching for content.  " + scraper.webData.Modules.Count + " modules found.";
+                if (scraper.populateProgress.errorMessages.Count > 0)
+                {
+                    statusLabel.Text += " ( " + scraper.populateProgress.errorMessages.Count + " errors )";
+                    statusLabel.Text += " View the log for more information.";
+                }
                 PopulateTreeView();
             }
+            scraper.SaveData();
+            scraper.populateProgress.EndJob();
         }
 
         // Saves all content to a serialized file on program exit.
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            scraper.SaveData();
+            // Only save data if the program isn't actively populating content
+            // This prevents errors that occur when saving incomplete data
+            if (!scraper.populateProgress.processing && scraper.initialized)
+            {
+                scraper.SaveData();
+            }
         }
 
         // Refresh Content
         // Re-populate all content from Blackboard. This can take several minutes.
         private void refreshMenuItem_Click(object sender, EventArgs e)
         {
+            contentTree.Nodes.Clear(); // Clear all existing nodes
             PopulateContent();
         }
 

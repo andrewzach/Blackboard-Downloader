@@ -35,6 +35,12 @@ namespace BlackboardDownloader
             return moduleNames;
         }
 
+        // Clears all data
+        public void ClearAll()
+        {
+            modules = new List<BbModule>();
+        }
+
         public BbModule GetModuleByName(string name)
         {
             foreach (BbModule m in modules)

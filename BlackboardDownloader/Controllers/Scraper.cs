@@ -24,6 +24,8 @@ namespace BlackboardDownloader
         public BbData webData;
         public bool initialized;
         private string cookieHeader;
+        public ScraperProgressReporter downloadProgress;
+        public ScraperProgressReporter populateProgress;
         public Logger log;
 
         public Scraper()
@@ -31,6 +33,8 @@ namespace BlackboardDownloader
             webData = new BbData();
             log = new Logger("##### Blackboard Downloader Starting #####", "BlackboardDownloader-log.txt");
             outputDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\BBDL-Output\\";
+            downloadProgress = new ScraperProgressReporter();
+            populateProgress = new ScraperProgressReporter();
             initialized = false;
         }
 
@@ -124,24 +128,14 @@ namespace BlackboardDownloader
         // ### POPULATING CONTENT ###
         public void PopulateAllData()
         {
+            webData.ClearAll();
             PopulateModules();  // scrapes list of modules available
-            foreach(BbModule m in webData.Modules)
-            {
-                PopulateModuleContent(m);
-            }
-        }
-
-        // Reports progress to GUI using the BackgroundWorker
-        public void PopulateAllData(BackgroundWorker worker)
-        {
-            PopulateModules();  // scrapes list of modules available
-            int moduleCounter = 0;
+            populateProgress.totalWork = webData.Modules.Count;
             foreach (BbModule m in webData.Modules)
             {
-                worker.ReportProgress(0, "Populating content for " + m.Name + " ( " + (moduleCounter + 1) + " of " + webData.Modules.Count + " )");
                 PopulateModuleContent(m);
-                worker.ReportProgress(0, m); // Pass module to GUI for updating the treeview
-                moduleCounter++;
+                populateProgress.IncWorkCounter();
+                populateProgress.ReportObject(m); // Pass module to GUI for updating the treeview
             }
         }
 
@@ -171,7 +165,7 @@ namespace BlackboardDownloader
         // Searches for content within module m and adding it.
         public void PopulateModuleContent(BbModule m)
         {
-            Console.Write("\nPopulating content for " + m.Name);
+            populateProgress.ReportStatus("Populating content for " + m.Name);
             try
             {
                 if (!m.Initialized)
@@ -182,7 +176,8 @@ namespace BlackboardDownloader
             }
             catch(Exception e)
             {
-                Console.Write(" Error populating content for module.");
+                populateProgress.ReportStatus("Error populating content for module: " + m.Name);
+                populateProgress.ReportError("Error populating content for module: " + m.Name);
                 log.Write("Content population error for: " + m.Name);
                 log.WriteException(e);
                 log.Write(e.StackTrace);
@@ -198,7 +193,7 @@ namespace BlackboardDownloader
             foreach (HtmlNode link in contentLinks)
             {
                 //Console.WriteLine("Adding " + folder.Name + ": " + link.InnerText);
-                Console.Write(".");
+                populateProgress.AppendStatus(".");
                 Uri linkURL = new Uri(folder.Url, link.Attributes["href"].Value);
                 if (HTMLParser.IsSubFolder(link))   // content is a subfolder
                 {
@@ -241,7 +236,7 @@ namespace BlackboardDownloader
             HtmlNode nextLink;
             while (nextURL != null)
             {
-                Console.Write(".");
+                populateProgress.AppendStatus(".");
                 string contentSource = http.DownloadString(nextURL);
                 List<HtmlNode> contentLinks = HTMLParser.GetLearningUnitContent(contentSource);
                 // for each content link found, add a file. Usually only one
@@ -280,14 +275,18 @@ namespace BlackboardDownloader
         }
 
 
-    // ### DOWNLOADING CONTENT ###
+        // ### DOWNLOADING CONTENT ###
 
-        // Downloads all files in a module
+        //Used in ConsoleUI
         public void DownloadModuleFiles(string moduleName)
         {
             BbModule m = webData.GetModuleByName(moduleName);
-            Console.WriteLine("Downloading files for module " + m.Name);
-            Console.WriteLine("Output directory = " + outputDirectory);
+            DownloadFolder(m.Content, outputDirectory + BbUtils.CleanDirectory(m.Name) + "\\");
+        }
+
+        // Downloads all files in a module
+        public void DownloadModuleFiles(BbModule m)
+        {
             DownloadFolder(m.Content, outputDirectory + BbUtils.CleanDirectory(m.Name) + "\\");
         }
         // Downloads all files in folders. Used recursively for each subfolder found.
@@ -316,7 +315,7 @@ namespace BlackboardDownloader
                 else if (file.LinkType == "website")
                 {
                     log.Write("Linking to website " + file.Url.AbsoluteUri);
-                    Console.WriteLine("Creating shortcut: " + shortDir + file.Name + "\n\tURL = " + file.Url.AbsoluteUri);
+                    downloadProgress.ReportStatus("Creating shortcut: " + shortDir + file.Name + file.Url.AbsoluteUri);
                     CreateUrlShortcut(file, directory);
                     return;
                 }
@@ -324,17 +323,18 @@ namespace BlackboardDownloader
                 {
                     return; // Don't try to download e-mail
                 }
-                Console.WriteLine("Downloading file (" + file.LinkType + "): " + shortDir + file.Name);
+                downloadProgress.ReportStatus("Downloading file (" + file.LinkType + "): " + shortDir + file.Name);
                 Directory.CreateDirectory(directory); //Create directory if it doesn't exist already
                 DetectFileName(file);
                 http.DownloadFile(file.Url.AbsoluteUri, directory + file.Filename);
+                downloadProgress.IncWorkCounter();
             }
             catch (WebException e)
             {
                 log.WriteException(e);
                 log.Write("ERROR: Cannot download file " + file);
                 log.Write(shortDir);
-                Console.WriteLine("ERROR: Cannot download file " + file);
+                downloadProgress.ReportError("ERROR: Cannot download file " + file);
             }
         }
 
@@ -405,19 +405,19 @@ namespace BlackboardDownloader
                 {
                     log.Write("ERROR: Could not detect filename for " + file);
                     log.WriteException(e);
-                    Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - No location header");
+                    downloadProgress.ReportError("ERROR: Could not detect filename for " + file.Name + " - No location header");
                 }
                 catch (WebException e)
                 {
                     log.Write("ERROR: Could not detect filename for " + file);
                     log.WriteException(e);
-                    Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - WebException");
+                    downloadProgress.ReportError("ERROR: Could not detect filename for " + file.Name + " - WebException");
                 }
                 catch (NotSupportedException e)
                 {
                     log.Write("ERROR: Could not detect filename for " + file);
                     log.WriteException(e);
-                    Console.WriteLine("ERROR: Could not detect filename for " + file.Name + " - URL format issue");
+                    downloadProgress.ReportError("ERROR: Could not detect filename for " + file.Name + " - URL format issue");
                 }
             }
         }
@@ -451,6 +451,96 @@ namespace BlackboardDownloader
                 success = false;
             }
             return success;
+        }
+    }
+
+    // A class used by the Scraper to report progress and status messages to the User Interface
+    // Communicates to UI through the BackgroundWorker that is passed when BeginJob is called
+    public class ScraperProgressReporter
+    {
+        public BackgroundWorker worker;
+        public string currentStatus;  
+        public bool processing;     // True if a task is currently reporting progress
+        public List<string> statusMessages;
+        public List<string> errorMessages;
+
+        // Progress
+        public int totalWork;   // Total number of tasks to be performed
+        private int workCounter;    // Current number
+        public int currentPercentage;
+
+        public ScraperProgressReporter()
+        {
+            processing = false;
+            statusMessages = new List<string>();
+            errorMessages = new List<string>();
+        }
+
+        // Called when a new job is starting. Resets all necessary attributes in preparation.
+        public void BeginJob(BackgroundWorker worker)
+        {
+            processing = true;
+            currentPercentage = 0;
+            workCounter = 0;
+            statusMessages.Clear();
+            errorMessages.Clear();
+            this.worker = worker;
+        }
+
+        // Called when a job is finished. 
+        public void EndJob()
+        {
+            this.worker = null;
+            processing = false;
+        }
+
+        // Reports a status message to the UI. 
+        public void ReportStatus(string newStatus)
+        {
+            currentStatus = newStatus;
+            statusMessages.Add(newStatus);
+            currentPercentage = (workCounter * 100) / totalWork;
+            if (processing)
+            {
+                WorkerUpdate();
+            }
+        }
+
+        // Increments the current work counter when a task has been completed
+        public void IncWorkCounter()
+        {
+            if (workCounter < totalWork) workCounter++;
+            else workCounter = totalWork;
+        }
+
+        // Records error messages for later retrieval by the UI
+        public void ReportError(string errorMessage)
+        {
+            errorMessages.Add(errorMessage);
+        }
+
+        // Appends a string to the current status message
+        // Used to provide updates when populating modules by adding periods.......
+        public void AppendStatus(string appendText)
+        {
+            currentStatus += appendText;
+            if (processing)
+            {
+                WorkerUpdate();
+            }
+        }
+
+        // Reports an object to the UI.
+        // Mainly used to send BbModules to the UI when populating content so they can be displayed
+        public void ReportObject(object reportItem)
+        {
+            worker.ReportProgress(currentPercentage, reportItem);
+        }
+
+        // Calls the BackgroundWorker's ReportProgress message with current percent and status.
+        private void WorkerUpdate()
+        {
+            worker.ReportProgress(currentPercentage, currentStatus);
         }
     }
 }
