@@ -24,7 +24,7 @@ namespace BlackboardDownloader
             initialized = false;
         }
 
-        // -- ATTRIBUTES --
+////////// ### ATTRIBUTES ###
         // Module name
         public string Name
         {
@@ -56,7 +56,7 @@ namespace BlackboardDownloader
             initialized = true;
         }
 
-        // -- SERIALIZE METHODS -- 
+////////// ### SERIALIZE METHODS ### 
         // The below are required for this object to be serialized and saved to a file
         // Return true if other object is a BbModule with the same Url
         public override bool Equals(object other)

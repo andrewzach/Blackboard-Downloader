@@ -10,11 +10,14 @@ using System.Windows.Forms;
 
 namespace BlackboardDownloader
 {
+    // The main GUI window for the program
+    // Displays a treeview showing all modules, folders, and files.
+    // Contains an Information box on the bottom right showing info on selected module/folder/file
+    // Has a statusLabel on the bottom to display status messages
+    // Main menu contains other commands. 
     public partial class MainForm : Form
     {
         private Scraper scraper;
-
-        // Counters to show status of download
 
         public MainForm()
         {
@@ -51,7 +54,7 @@ namespace BlackboardDownloader
             }
         }
 
-        // -- POPULATE CONTENT IN TREEVIEW --
+////////// ### POPULATE CONTENT IN TREEVIEW ###
 
         // Populates the TreeView with all data in the scraper's BbData (webData)
         private void PopulateTreeView()
@@ -197,7 +200,7 @@ namespace BlackboardDownloader
             statusLabel.ResetText();
         }
 
-        // -- MAIN MENU - COMMANDS MENU ITEMS --
+////////// ### MAIN MENU - COMMANDS MENU ITEMS ###
 
         // Login
         // Allows user to re-login with a different username/password. Re-initializes the program.
@@ -210,7 +213,7 @@ namespace BlackboardDownloader
         // Opens the porgram's log file for user to browse. 
         private void viewLogMenuItem_Click(object sender, EventArgs e)
         {
-            string logFilePath = scraper.Log.GetLogFilePath();
+            string logFilePath = scraper.Log.FilePath;
             System.Diagnostics.Process.Start(logFilePath);
         }
 
@@ -237,7 +240,7 @@ namespace BlackboardDownloader
             aboutDialog.ShowDialog();
         }
 
-        // -- DOWNLOAD FILES --
+////////// ### DOWNLOAD FILES ###
 
         // EventHandler for Download button
         private void DownloadButton_Click(object sender, EventArgs e)
@@ -280,21 +283,21 @@ namespace BlackboardDownloader
             if (selectedNode.Tag.GetType() == typeof(BbModule))
             {
                 BbModule module = selectedNode.Tag as BbModule;
-                scraper.DownloadProgress.totalWork = module.Content.CountAllFiles();
+                scraper.DownloadProgress.TotalWork = module.Content.CountAllFiles();
                 scraper.DownloadModuleFiles(module);
             }
             // Single folder selected
             else if (selectedNode.Tag.GetType() == typeof(BbContentDirectory))
             {
                 BbContentDirectory folder = selectedNode.Tag as BbContentDirectory;
-                scraper.DownloadProgress.totalWork = folder.CountAllFiles();
+                scraper.DownloadProgress.TotalWork = folder.CountAllFiles();
                 scraper.DownloadFolder(folder, scraper.OutputDirectory);
             }
             // Single file selected
             else if (selectedNode.Tag.GetType() == typeof(BbContentItem))
             {
                 BbContentItem file = selectedNode.Tag as BbContentItem;
-                scraper.DownloadProgress.totalWork = 1;
+                scraper.DownloadProgress.TotalWork = 1;
                 scraper.DownloadFile(file);
             }
         }
@@ -321,17 +324,17 @@ namespace BlackboardDownloader
             else
             {
                 progressBar.Value = 100;
-                statusLabel.Text = "Done downloading " + scraper.DownloadProgress.totalWork + " files.";
-                if (scraper.DownloadProgress.errorMessages.Count > 0)
+                statusLabel.Text = "Done downloading " + scraper.DownloadProgress.TotalWork + " files.";
+                if (scraper.DownloadProgress.ErrorMessages.Count > 0)
                 {
-                    statusLabel.Text += " ( " + scraper.DownloadProgress.errorMessages.Count + " errors )";
+                    statusLabel.Text += " ( " + scraper.DownloadProgress.ErrorMessages.Count + " errors )";
                     statusLabel.Text += " View the log for more information.";
                 }
             }
             scraper.DownloadProgress.EndJob();
         }
 
-        // -- POPULATE CONTENT --
+////////// ### POPULATE CONTENT ###
 
         // Searches for content on Blackboard and populates modules/folders/files
         // Happens asynchronously using a BackgroundWorker.
@@ -391,9 +394,9 @@ namespace BlackboardDownloader
             {
                 progressBar.Value = 100;
                 statusLabel.Text = "Done searching for content.  " + scraper.WebData.Modules.Count + " modules found.";
-                if (scraper.PopulateProgress.errorMessages.Count > 0)
+                if (scraper.PopulateProgress.ErrorMessages.Count > 0)
                 {
-                    statusLabel.Text += " ( " + scraper.PopulateProgress.errorMessages.Count + " errors )";
+                    statusLabel.Text += " ( " + scraper.PopulateProgress.ErrorMessages.Count + " errors )";
                     statusLabel.Text += " View the log for more information.";
                 }
                 PopulateTreeView();
@@ -407,7 +410,7 @@ namespace BlackboardDownloader
         {
             // Only save data if the program isn't actively populating content
             // This prevents errors that occur when saving incomplete data
-            if (!scraper.PopulateProgress.processing && scraper.Initialized)
+            if (!scraper.PopulateProgress.Processing && scraper.Initialized)
             {
                 scraper.SaveData();
             }

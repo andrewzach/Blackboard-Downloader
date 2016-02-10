@@ -18,6 +18,7 @@ namespace BlackboardDownloader
             modules = new List<BbModule>();
         }
 
+////////// ### ATTRIBUTES ###
         public List<BbModule> Modules
         {
             get { return modules; }

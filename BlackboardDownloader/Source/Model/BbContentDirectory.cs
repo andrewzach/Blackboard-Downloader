@@ -27,7 +27,7 @@ namespace BlackboardDownloader
             files = new List<BbContentItem>();
         }
 
-        // -- ATTRIBUTES --
+////////// ### ATTRIBUTES ###
         // Directory name (link text that appears on Blackboard)
         public string Name
         {
@@ -89,7 +89,7 @@ namespace BlackboardDownloader
             return fileCount;
         }
 
-        // -- SERIALIZE METHODS -- 
+////////// ### SERIALIZE METHODS ### 
         // The below are required for this object to be serialized and saved to a file
         // Return true if other object is a BbContentDirectory with the same url
         public override bool Equals(object other)

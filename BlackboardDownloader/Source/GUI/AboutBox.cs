@@ -9,6 +9,8 @@ using System.Windows.Forms;
 
 namespace BlackboardDownloader
 {
+    // Displays the "About" dialog, showing information about the program
+    // Based on Visual Studio's AboutBox template
     partial class AboutBox : Form
     {
         public AboutBox()

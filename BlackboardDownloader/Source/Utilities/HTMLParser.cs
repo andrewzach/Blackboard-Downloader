@@ -35,23 +35,27 @@ namespace BlackboardDownloader
         }
 
         // Returns a list of all content links in the page source. Content links could either be folders or files
+        // Return null if none found
         // To be used on a BbContentDirectory's page
         public static List<HtmlNode> GetContentLinks(string pageSource)
         {
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
+            // XPath finds links in <li> tags with id contentListItem. Excludes links with uploadAssignment? (assignment submission links)
             HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//li[contains(@id, 'contentListItem')]//a[not(contains(@href,'uploadAssignment?'))]");
             if (contentLinks != null) return contentLinks.ToList();
             else return null;
         }
 
         // Returns a list of all links to Blackboard LearningUnits
+        // Return null if none found
         // To be used on a BbContentDirectory's page
         // Learning units are similar to folders/directories, but structured differently
         public static List<HtmlNode> GetLearningUnitLinks(string pageSource)
         {
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
+            // XPath finds links that have "displayLearningUnit" in their href.
             HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//a[contains(@href,'displayLearningUnit')]");
             if (contentLinks != null) return contentLinks.ToList();
             else return null;
@@ -64,6 +68,7 @@ namespace BlackboardDownloader
         {
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
+            // XPath finds links with imgs using the next arrow icon
             HtmlNode nextLink = doc.DocumentNode.SelectSingleNode("//a[img[contains(@src,'arrow_next_li.gif')]]");
             return nextLink;
         }
@@ -73,7 +78,10 @@ namespace BlackboardDownloader
         {
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
+            // Two different methods are used in finding learning unit content links. Combine both to get all links.
+            // XPath finds all links in the div 'vtbegenerated'
             HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//div[@class='vtbegenerated']//a[@href]");
+            // XPath finds all links in the span 'fnt3'
             HtmlNodeCollection contentLinks2 = doc.DocumentNode.SelectNodes("//span[@class='fnt3']//a[@href]");
             List<HtmlNode> allLinks = new List<HtmlNode>();
             if (contentLinks != null) { allLinks.AddRange(contentLinks.ToList()); }
@@ -88,6 +96,7 @@ namespace BlackboardDownloader
         {
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
+            // XPath selects all iframes in the vtbegenerated div
             HtmlNode iframe = doc.DocumentNode.SelectSingleNode("//div[@class='vtbegenerated']//iframe[@src]");
             if (iframe != null)
             {
@@ -102,6 +111,7 @@ namespace BlackboardDownloader
         {
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
+            // XPath selects all links containing 'listContent.jsp' that are within the <li> with id 'paletteItem'
             HtmlNode contentLink = doc.DocumentNode.SelectSingleNode("//li[contains(@id, 'paletteItem')]//a[contains(@href,'listContent.jsp')]");
             return contentLink;
         }
@@ -119,15 +129,13 @@ namespace BlackboardDownloader
         // Return true if link points to a Blackboard folder/directory
         public static bool IsSubFolder(HtmlNode link)
         {
-            if (link.Attributes["href"].Value.Contains("listContent.jsp")) { return true; }
-            else { return false; }
+            return link.Attributes["href"].Value.Contains("listContent.jsp");
         }
 
         // Return true if link points to a Blackboard LearningUnit
         public static bool IsLearningUnit(HtmlNode link)
         {
-            if (link.Attributes["href"].Value.Contains("displayLearningUnit?")) { return true; }
-            else { return false; }
+            return link.Attributes["href"].Value.Contains("displayLearningUnit?");
         }
 
         // Returns the link type. Takes a file's Url as the parameter.

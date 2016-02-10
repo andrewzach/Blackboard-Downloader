@@ -17,8 +17,11 @@ namespace BlackboardDownloader
 {
     public class Scraper
     {
+        // Environment variables - specific to DIT's Webcourses.
+        // Change these for other Blackboard sites
         public static string PORTAL = "https://dit-bb.blackboard.com";
         public static string MODID = "_25_1";
+
         private WebClientEx http;
         private string outputDirectory;
         private BbData webData;
@@ -38,7 +41,7 @@ namespace BlackboardDownloader
             initialized = false;
         }
 
-        // -- ATTRIBUTES --
+////////// ### ATTRIBUTES ###
         // A logger that writes diagnostic information to a .txt file when requested
         public Logger Log
         {
@@ -110,7 +113,7 @@ namespace BlackboardDownloader
             return webData.GetModuleByName(name);
         }
 
-        // ### LOGIN AND SETUP ###
+////////// ### LOGIN AND SETUP ###
         // Logs into Blackboard with supplied user information
         // Retrieves session cookie after login and initializes the WebClientEx with this cookie
         public bool Login(string username, string password)
@@ -170,13 +173,13 @@ namespace BlackboardDownloader
             return cookieHeader;
         }
 
-        // ### POPULATING CONTENT ###
+////////// ### POPULATING CONTENT ###
         // Clears all existing data and begins populating content for all modules
         public void PopulateAllData()
         {
             webData.ClearAll();
             PopulateModules();  // scrapes list of modules available
-            populateProgress.totalWork = webData.Modules.Count;
+            populateProgress.TotalWork = webData.Modules.Count;
             foreach (BbModule m in webData.Modules)
             {
                 PopulateModuleContent(m);
@@ -322,7 +325,7 @@ namespace BlackboardDownloader
         }
 
 
-        // ### DOWNLOADING CONTENT ###
+////////// ### DOWNLOADING CONTENT ###
 
         //Used in ConsoleUI
         public void DownloadModuleFiles(string moduleName)
@@ -469,6 +472,7 @@ namespace BlackboardDownloader
             }
         }
 
+        // Serializes all data (webData) and writes it to a savedata.bin file. 
         public void SaveData()
         {
             IFormatter formatter = new BinaryFormatter();
@@ -477,6 +481,8 @@ namespace BlackboardDownloader
             stream.Close();
         }
 
+        // Loads serialized data from the savedata.bin file into webData. 
+        // Returns true if successfully loaded, false otherwise
         public bool LoadData()
         {
             bool success;
@@ -489,11 +495,11 @@ namespace BlackboardDownloader
                 success = true;
                 stream.Close();
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 success = false;
             }
-            catch (SerializationException e)
+            catch (SerializationException)
             {
                 success = false;
             }
@@ -505,16 +511,15 @@ namespace BlackboardDownloader
     // Communicates to UI through the BackgroundWorker that is passed when BeginJob is called
     public class ScraperProgressReporter
     {
-        public BackgroundWorker worker;
-        public string currentStatus;  
-        public bool processing;     // True if a task is currently reporting progress
-        public List<string> statusMessages;
-        public List<string> errorMessages;
+        private BackgroundWorker worker;
+        private string currentStatus;
+        private bool processing;     
+        private List<string> statusMessages;
+        private List<string> errorMessages;
 
         // Progress
-        public int totalWork;   // Total number of tasks to be performed
-        private int workCounter;    // Current number
-        public int currentPercentage;
+        private int totalWork;
+        private int workCounter;
 
         public ScraperProgressReporter()
         {
@@ -523,11 +528,55 @@ namespace BlackboardDownloader
             errorMessages = new List<string>();
         }
 
+////////// ## ATTRIBUTES ##
+        // Current status message - displayed in bottom of GUI
+        public string CurrentStatus
+        {
+            get { return currentStatus; }
+        }
+
+        // True if a job is currently reporting progress
+        public bool Processing
+        {
+            get { return processing; }
+        }
+
+        // A list of all past status messages for this job
+        public List<string> StatusMessages
+        {
+            get { return statusMessages; }
+        }
+
+        // A list of all past error messages for this job
+        public List<string> ErrorMessages
+        {
+            get { return errorMessages; }
+        }
+
+        // Total number of tasks to be performed
+        public int TotalWork
+        {
+            get { return totalWork; }
+            set { totalWork = value; }
+        }
+        
+        // Current task number
+        public int WorkCounter
+        {
+            get { return workCounter; }
+        }
+
+        // Current percent complete for job
+        public int CurrentPercentage
+        {
+            get { return (workCounter * 100) / totalWork; }
+        }
+
+////////// ## METHODS ##
         // Called when a new job is starting. Resets all necessary attributes in preparation.
         public void BeginJob(BackgroundWorker worker)
         {
             processing = true;
-            currentPercentage = 0;
             workCounter = 0;
             statusMessages.Clear();
             errorMessages.Clear();
@@ -546,7 +595,6 @@ namespace BlackboardDownloader
         {
             currentStatus = newStatus;
             statusMessages.Add(newStatus);
-            currentPercentage = (workCounter * 100) / totalWork;
             if (processing)
             {
                 WorkerUpdate();
@@ -581,13 +629,13 @@ namespace BlackboardDownloader
         // Mainly used to send BbModules to the UI when populating content so they can be displayed
         public void ReportObject(object reportItem)
         {
-            worker.ReportProgress(currentPercentage, reportItem);
+            worker.ReportProgress(CurrentPercentage, reportItem);
         }
 
         // Calls the BackgroundWorker's ReportProgress message with current percent and status.
         private void WorkerUpdate()
         {
-            worker.ReportProgress(currentPercentage, currentStatus);
+            worker.ReportProgress(CurrentPercentage, currentStatus);
         }
     }
 }

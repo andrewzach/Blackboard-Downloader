@@ -26,7 +26,7 @@ namespace BlackboardDownloader
             filename = BbUtils.CleanFileName(name).Truncate(40);
         }
 
-        // -- ATTRIBUTES --
+////////// ### ATTRIBUTES ###
         // Name of the file - the link text that appears on Blackboard
         public string Name
         {
@@ -74,7 +74,7 @@ namespace BlackboardDownloader
                 Environment.NewLine + "URL[" + url.AbsoluteUri + "]";
         }
 
-        // -- SERIALIZE METHODS -- 
+////////// ### SERIALIZE METHODS ### 
         // Returns true if other object is a BbContentItem with the same url
         public override bool Equals(object other)
         {

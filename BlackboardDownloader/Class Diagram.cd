@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="BlackboardDownloader.Scraper">
+    <Position X="5.75" Y="5.25" Width="3.25" />
+    <Members>
+      <Field Name="cookieHeader" Hidden="true" />
+      <Field Name="downloadProgress" Hidden="true" />
+      <Field Name="http" Hidden="true" />
+      <Field Name="initialized" Hidden="true" />
+      <Field Name="log" Hidden="true" />
+      <Field Name="MODID" Hidden="true" />
+      <Field Name="outputDirectory" Hidden="true" />
+      <Field Name="populateProgress" Hidden="true" />
+      <Field Name="PORTAL" Hidden="true" />
+      <Method Name="Scraper" Hidden="true" />
+      <Field Name="webData" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>sBAAGhASABAQAAAACPABDAkQAAgAAASAAAARQMACAAE=</HashCode>
+      <FileName>Source\Controllers\Scraper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.ScraperProgressReporter">
+    <Position X="9" Y="0.5" Width="3.25" />
+    <Members>
+      <Method Name="ScraperProgressReporter" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAIgRCAAYEQhAAMAAAQQCEAAAAgQgAAAEAAAAABA=</HashCode>
+      <FileName>Source\Controllers\Scraper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.LoginForm">
+    <Position X="16.25" Y="6.75" Width="2.5" />
+    <Members>
+      <Field Name="bottomTableLayout" Hidden="true" />
+      <Field Name="components" Hidden="true" />
+      <Method Name="Dispose" Hidden="true" />
+      <Method Name="InitializeComponent" Hidden="true" />
+      <Method Name="LoginForm" Hidden="true" />
+      <Field Name="loginGroupBox" Hidden="true" />
+      <Field Name="loginGroupTableLayout" Hidden="true" />
+      <Field Name="loginIcon" Hidden="true" />
+      <Field Name="mainTableLayout" Hidden="true" />
+      <Field Name="passwordLabel" Hidden="true" />
+      <Field Name="quitButton" Hidden="true" />
+      <Field Name="submitButton" Hidden="true" />
+      <Field Name="usernameLabel" Hidden="true" />
+      <Field Name="welcomeLabel" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>BYAIAAAgACEQAAgAAACAAAACAACQABgkIABAAAgAAAQ=</HashCode>
+      <FileName>Source\GUI\LoginForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.MainForm">
+    <Position X="11" Y="5.5" Width="4.5" />
+    <Members>
+      <Field Name="aboutMenuItem" Hidden="true" />
+      <Field Name="commandsMenuItem" Hidden="true" />
+      <Field Name="components" Hidden="true" />
+      <Method Name="Dispose" Hidden="true" />
+      <Field Name="downloadButton" Hidden="true" />
+      <Field Name="horizontalLineLabel" Hidden="true" />
+      <Field Name="infoGroupBox" Hidden="true" />
+      <Field Name="infoLabel1" Hidden="true" />
+      <Field Name="infoLabel2" Hidden="true" />
+      <Field Name="infoLabel3" Hidden="true" />
+      <Field Name="infoLabel4" Hidden="true" />
+      <Field Name="informationTableLayout" Hidden="true" />
+      <Field Name="infoText1" Hidden="true" />
+      <Field Name="infoText2" Hidden="true" />
+      <Field Name="infoText3" Hidden="true" />
+      <Field Name="infoTextLink" Hidden="true" />
+      <Method Name="InitializeComponent" Hidden="true" />
+      <Field Name="loginMenuItem" Hidden="true" />
+      <Method Name="MainForm" Hidden="true" />
+      <Field Name="mainMenu1" Hidden="true" />
+      <Field Name="mainTableLayout" Hidden="true" />
+      <Field Name="menuItem1" Hidden="true" />
+      <Field Name="outputMenuItem" Hidden="true" />
+      <Field Name="progressBar" Hidden="true" />
+      <Field Name="refreshMenuItem" Hidden="true" />
+      <Field Name="rightTableLayoutPanel" Hidden="true" />
+      <Field Name="viewLogMenuItem" Hidden="true" />
+      <Field Name="yourModulesLabel" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>IIAABBCUAygBARAAekLUECAKwBAB0UgBgAACAgAiRCA=</HashCode>
+      <FileName>Source\GUI\MainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.BbContentDirectory">
+    <Position X="8.5" Y="13.5" Width="3.25" />
+    <Members>
+      <Method Name="BbContentDirectory" Hidden="true" />
+      <Field Name="files" Hidden="true" />
+      <Field Name="folder" Hidden="true" />
+      <Field Name="name" Hidden="true" />
+      <Field Name="subFolders" Hidden="true" />
+      <Field Name="url" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAoEAABAAAAAAAIAgAAAAAQAAAAMAIAACAAQgAACAIA=</HashCode>
+      <FileName>Source\Model\BbContentDirectory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.BbContentItem">
+    <Position X="12.5" Y="13.5" Width="2.75" />
+    <Members>
+      <Method Name="BbContentItem" Hidden="true" />
+      <Field Name="filename" Hidden="true" />
+      <Field Name="folder" Hidden="true" />
+      <Field Name="linkType" Hidden="true" />
+      <Field Name="name" Hidden="true" />
+      <Field Name="url" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAEAABAAAAAQAAEgAAAAAQAAAAMAIAACAAAIAAABCA=</HashCode>
+      <FileName>Source\Model\BbContentItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.BbData">
+    <Position X="1.5" Y="13.5" Width="3" />
+    <Members>
+      <Method Name="BbData" Hidden="true" />
+      <Field Name="modules" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAABAABAAQAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\Model\BbData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.BbModule">
+    <Position X="5.25" Y="13.5" Width="2.5" />
+    <Members>
+      <Method Name="BbModule" Hidden="true" />
+      <Field Name="content" Hidden="true" />
+      <Field Name="initialized" Hidden="true" />
+      <Field Name="name" Hidden="true" />
+      <Field Name="url" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAKEAAAAhAAAAAAgAAAAAQAAAAMAIAACAAAAAAAAAA=</HashCode>
+      <FileName>Source\Model\BbModule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.BbUtils">
+    <Position X="1.75" Y="8.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Source\Utilities\BbUtils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.StringExt">
+    <Position X="1.75" Y="10.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\Utilities\BbUtils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.Logger">
+    <Position X="2.5" Y="1.25" Width="2.25" />
+    <Members>
+      <Field Name="exePath" Hidden="true" />
+      <Field Name="filename" Hidden="true" />
+      <Method Name="Logger" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAEBABA=</HashCode>
+      <FileName>Source\Utilities\BbUtils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.HTMLParser">
+    <Position X="1.5" Y="4.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAABAAwAEAAAASABAAAAAAAAAgEEAABAAEAAAA=</HashCode>
+      <FileName>Source\Utilities\HTMLParser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlackboardDownloader.WebClientEx">
+    <Position X="5.5" Y="0.5" Width="2.75" />
+    <Members>
+      <Method Name="WebClientEx" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAQAAAAAEABAAAAAQAAAAAAIAAAA=</HashCode>
+      <FileName>Source\WebClientEx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

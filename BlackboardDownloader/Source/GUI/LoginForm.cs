@@ -10,6 +10,8 @@ using System.Windows.Forms;
 
 namespace BlackboardDownloader
 {
+    // Displays a login form for Blackboard
+    // Shown at start of program as a dialog
     public partial class LoginForm : Form
     {
         private Scraper scraper;
@@ -35,21 +37,9 @@ namespace BlackboardDownloader
             return passwordText.Text;
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
+        // Tells the Scraper to login using the information entered by the user
+        // Display invalid login warning if login is not successful.
+        // If login successful, close the dialog
         private void SubmitButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Yes;
@@ -66,11 +56,7 @@ namespace BlackboardDownloader
             }
         }
 
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        // Exits the program
         private void quitButton_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Abort;

@@ -6,10 +6,16 @@ using System.Threading.Tasks;
 
 namespace BlackboardDownloader
 {
+    // The Console User Interface originally developed for BlackboardDownloader
+    // Now replaced with the GUI in MainGUI and MainForm
+    // No longer functions as intended -- see Git history for last working version (before GUI branch merge)
+    // Can theoretically be restored by creating a Console implementation of ScraperProgressReporter 
     public class ConsoleUI
     {
         public static Dictionary<char, string> menuOptions;
         public static Scraper scraper;
+
+        // Commented out as program now runs in MainGUI. 
 
         //public static void Main(string[] args)
         //{ 
@@ -71,6 +77,7 @@ namespace BlackboardDownloader
             Console.WriteLine();
         }
 
+        // Displays the welcome sign
         public static void DisplayWelcome()
         {
             Console.WriteLine("###############################################");
@@ -80,6 +87,7 @@ namespace BlackboardDownloader
             Console.WriteLine();
         }
 
+        // Display the option menu
         public static void DisplayMenu()
         {
             Console.WriteLine();
@@ -90,6 +98,7 @@ namespace BlackboardDownloader
             }
         }
 
+        // Get user's choice for the main menu. Validates input
         public static char GetMenuChoice()
         {
             char choice;
@@ -104,6 +113,8 @@ namespace BlackboardDownloader
             return choice;
         }
 
+        // View Content 
+        // Allows user to navigate the content of a module
         public static void ViewContent()
         {
             List<string> modules = scraper.GetModuleNames();
