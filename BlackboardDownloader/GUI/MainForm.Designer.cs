@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
             this.commandsMenuItem = new System.Windows.Forms.MenuItem();
             this.loginMenuItem = new System.Windows.Forms.MenuItem();
@@ -360,6 +361,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(982, 447);
             this.Controls.Add(this.mainTableLayout);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Menu = this.mainMenu1;
             this.Name = "MainForm";
             this.Text = "Blackboard Downloader";

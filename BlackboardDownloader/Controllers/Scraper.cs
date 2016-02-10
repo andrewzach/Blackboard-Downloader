@@ -20,13 +20,13 @@ namespace BlackboardDownloader
         public static string PORTAL = "https://dit-bb.blackboard.com";
         public static string MODID = "_25_1";
         private WebClientEx http;
-        public string outputDirectory;
-        public BbData webData;
-        public bool initialized;
+        private string outputDirectory;
+        private BbData webData;
+        private bool initialized;
         private string cookieHeader;
-        public ScraperProgressReporter downloadProgress;
-        public ScraperProgressReporter populateProgress;
-        public Logger log;
+        private ScraperProgressReporter downloadProgress;
+        private ScraperProgressReporter populateProgress;
+        private Logger log;
 
         public Scraper()
         {
@@ -38,6 +38,39 @@ namespace BlackboardDownloader
             initialized = false;
         }
 
+        // -- ATTRIBUTES --
+        // A logger that writes diagnostic information to a .txt file when requested
+        public Logger Log
+        {
+            get { return log; }
+        }
+
+        // Communicates download progress and status messages to the UI
+        public ScraperProgressReporter DownloadProgress
+        {
+            get { return downloadProgress; }
+        }
+
+        // Communicates content population progress and status messages to the UI
+        public ScraperProgressReporter PopulateProgress
+        {
+            get { return populateProgress; }
+        }
+
+        // Return true if Scraper has been initalized
+        // True after successful login and creation of WebClientEx with appropriate cookies
+        public bool Initialized
+        {
+            get { return initialized; }
+        }
+
+        // Contains all Blackboard modules, folders, and files found by Scraper 
+        public BbData WebData
+        {
+            get { return webData; }
+        }
+
+        // Windows directory where downloaded files will be saved
         public string OutputDirectory
         {
             get { return outputDirectory; }
@@ -45,6 +78,7 @@ namespace BlackboardDownloader
             {
                 try
                 {
+                    // If user enters nothing, don't change the directory (Console UI)
                     if (value == "")
                     {
                         value = outputDirectory;
@@ -53,6 +87,7 @@ namespace BlackboardDownloader
                     {
                         value = value + "\\";   // add \ if directory doesn't end with one
                     }
+                    // Creates the folder in Windows if it doesn't already exist
                     Directory.CreateDirectory(value);
                     outputDirectory = value;
                 }
@@ -63,18 +98,21 @@ namespace BlackboardDownloader
             } 
         }
 
+        // Returns a list of all module names. Used in Console UI
         public List<string> GetModuleNames()
         {
             return webData.GetModuleNames();
         }
 
+        // Returns the BbModule with the given name (Console UI)
         public BbModule GetModuleByName(string name)
         {
             return webData.GetModuleByName(name);
         }
 
-
         // ### LOGIN AND SETUP ###
+        // Logs into Blackboard with supplied user information
+        // Retrieves session cookie after login and initializes the WebClientEx with this cookie
         public bool Login(string username, string password)
         {
             cookieHeader = GetLoginCookieHeader(username, password);
@@ -89,7 +127,7 @@ namespace BlackboardDownloader
             }
         }
 
-        // instantiate http web client with cookie header from login
+        // Instantiates http web client with cookie header from login
         private void InitWebClient(string cookieHeader)
         {
             CookieContainer cookieJar = new CookieContainer();
@@ -100,20 +138,27 @@ namespace BlackboardDownloader
 
         
         // Log in to webcourses with username and password, returns the Set-cookie header string
+        // Returns null if login not successful
         private string GetLoginCookieHeader(string username, string password)
         {
             string formUrl = PORTAL +"/webapps/login/"; 
+            // Format the parameter portion of the url to post
             string formParams = string.Format("user_id={0}&password={1}&login=Login&action=login&newloc=", username, password);
             string cookieHeader;
+            // Create WebRequest to POST login form
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(formUrl);
             req.ContentType = "application/x-www-form-urlencoded";
             req.Method = "POST";
+            // Writes the form parameters to the request using an ASCII stream
+            // Ensures the request is properly formatted
             byte[] bytes = Encoding.ASCII.GetBytes(formParams);
             req.ContentLength = bytes.Length;
             using (System.IO.Stream os = req.GetRequestStream())
             {
                 os.Write(bytes, 0, bytes.Length);
             }
+
+            // Get the response from the web server and check headers for successful login cookie
             using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
             {
                 cookieHeader = resp.Headers["Set-cookie"];
@@ -126,6 +171,7 @@ namespace BlackboardDownloader
         }
 
         // ### POPULATING CONTENT ###
+        // Clears all existing data and begins populating content for all modules
         public void PopulateAllData()
         {
             webData.ClearAll();
@@ -140,6 +186,7 @@ namespace BlackboardDownloader
         }
 
         // Create BbModule objects for each module found and add them to webData
+        // Does not populate content within the module
         public void PopulateModules()
         {
             NameValueCollection reqParams = new NameValueCollection();
@@ -327,7 +374,6 @@ namespace BlackboardDownloader
                 Directory.CreateDirectory(directory); //Create directory if it doesn't exist already
                 DetectFileName(file);
                 http.DownloadFile(file.Url.AbsoluteUri, directory + file.Filename);
-                downloadProgress.IncWorkCounter();
             }
             catch (WebException e)
             {
@@ -336,6 +382,7 @@ namespace BlackboardDownloader
                 log.Write(shortDir);
                 downloadProgress.ReportError("ERROR: Cannot download file " + file);
             }
+            downloadProgress.IncWorkCounter();
         }
 
         public void DownloadFile(BbContentItem file)

@@ -57,7 +57,7 @@ namespace BlackboardDownloader
         private void PopulateTreeView()
         {
             contentTree.Nodes.Clear(); // Clear any existing tree nodes
-            foreach (BbModule module in scraper.webData.Modules)
+            foreach (BbModule module in scraper.WebData.Modules)
             {
                 PopulateTreeModule(module);   
             }
@@ -183,7 +183,7 @@ namespace BlackboardDownloader
             LoginForm loginForm = new LoginForm(scraper);
             DialogResult result = loginForm.ShowDialog();
             // While login has not been successful, keep opening the LoginForm
-            while (!scraper.initialized)     
+            while (!scraper.Initialized)     
             {
                 // If user chose to quit the program
                 if (result == DialogResult.Abort || result == DialogResult.Cancel)
@@ -210,7 +210,7 @@ namespace BlackboardDownloader
         // Opens the porgram's log file for user to browse. 
         private void viewLogMenuItem_Click(object sender, EventArgs e)
         {
-            string logFilePath = scraper.log.GetLogFilePath();
+            string logFilePath = scraper.Log.GetLogFilePath();
             System.Diagnostics.Process.Start(logFilePath);
         }
 
@@ -273,28 +273,28 @@ namespace BlackboardDownloader
         {
             BackgroundWorker worker = sender as BackgroundWorker;
             TreeNode selectedNode = e.Argument as TreeNode;
-            scraper.downloadProgress.BeginJob(worker);
+            scraper.DownloadProgress.BeginJob(worker);
 
             // -- DETERMINE TYPE OF NODE SELECTED --
             // Module selected
             if (selectedNode.Tag.GetType() == typeof(BbModule))
             {
                 BbModule module = selectedNode.Tag as BbModule;
-                scraper.downloadProgress.totalWork = module.Content.CountAllFiles();
+                scraper.DownloadProgress.totalWork = module.Content.CountAllFiles();
                 scraper.DownloadModuleFiles(module);
             }
             // Single folder selected
             else if (selectedNode.Tag.GetType() == typeof(BbContentDirectory))
             {
                 BbContentDirectory folder = selectedNode.Tag as BbContentDirectory;
-                scraper.downloadProgress.totalWork = folder.CountAllFiles();
+                scraper.DownloadProgress.totalWork = folder.CountAllFiles();
                 scraper.DownloadFolder(folder, scraper.OutputDirectory);
             }
             // Single file selected
             else if (selectedNode.Tag.GetType() == typeof(BbContentItem))
             {
                 BbContentItem file = selectedNode.Tag as BbContentItem;
-                scraper.downloadProgress.totalWork = 1;
+                scraper.DownloadProgress.totalWork = 1;
                 scraper.DownloadFile(file);
             }
         }
@@ -321,14 +321,14 @@ namespace BlackboardDownloader
             else
             {
                 progressBar.Value = 100;
-                statusLabel.Text = "Done downloading " + scraper.downloadProgress.totalWork + " files.";
-                if (scraper.downloadProgress.errorMessages.Count > 0)
+                statusLabel.Text = "Done downloading " + scraper.DownloadProgress.totalWork + " files.";
+                if (scraper.DownloadProgress.errorMessages.Count > 0)
                 {
-                    statusLabel.Text += " ( " + scraper.downloadProgress.errorMessages.Count + " errors )";
+                    statusLabel.Text += " ( " + scraper.DownloadProgress.errorMessages.Count + " errors )";
                     statusLabel.Text += " View the log for more information.";
                 }
             }
-            scraper.downloadProgress.EndJob();
+            scraper.DownloadProgress.EndJob();
         }
 
         // -- POPULATE CONTENT --
@@ -354,7 +354,7 @@ namespace BlackboardDownloader
         // DoWork event handler for PopulateContent BackgroundWorker.
         private void PopulateContentBW_DoWork(object sender, DoWorkEventArgs e)
         {
-            scraper.populateProgress.BeginJob(sender as BackgroundWorker);
+            scraper.PopulateProgress.BeginJob(sender as BackgroundWorker);
             scraper.PopulateAllData();
         }
 
@@ -390,16 +390,16 @@ namespace BlackboardDownloader
             else
             {
                 progressBar.Value = 100;
-                statusLabel.Text = "Done searching for content.  " + scraper.webData.Modules.Count + " modules found.";
-                if (scraper.populateProgress.errorMessages.Count > 0)
+                statusLabel.Text = "Done searching for content.  " + scraper.WebData.Modules.Count + " modules found.";
+                if (scraper.PopulateProgress.errorMessages.Count > 0)
                 {
-                    statusLabel.Text += " ( " + scraper.populateProgress.errorMessages.Count + " errors )";
+                    statusLabel.Text += " ( " + scraper.PopulateProgress.errorMessages.Count + " errors )";
                     statusLabel.Text += " View the log for more information.";
                 }
                 PopulateTreeView();
             }
             scraper.SaveData();
-            scraper.populateProgress.EndJob();
+            scraper.PopulateProgress.EndJob();
         }
 
         // Saves all content to a serialized file on program exit.
@@ -407,7 +407,7 @@ namespace BlackboardDownloader
         {
             // Only save data if the program isn't actively populating content
             // This prevents errors that occur when saving incomplete data
-            if (!scraper.populateProgress.processing && scraper.initialized)
+            if (!scraper.PopulateProgress.processing && scraper.Initialized)
             {
                 scraper.SaveData();
             }

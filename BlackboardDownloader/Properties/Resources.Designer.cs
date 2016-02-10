@@ -59,5 +59,16 @@ namespace BlackboardDownloader.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This program was developed for my final project for the Higher Diploma in Computing degree at the Dublin Institute of Technology. It is written in C# and uses Windows Forms for the GUI.
+        ///
+        ///Blackboard Downloader was written to simplify downloading large amounts of files from courses on Blackboard. Normally, downloading an entire course&apos;s files requires individually clicking on each file, finding the download link, saving it, and then manually re-organizing them into appropriate folders. This can take quite a [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DetailedDescription {
+            get {
+                return ResourceManager.GetString("DetailedDescription", resourceCulture);
+            }
+        }
     }
 }

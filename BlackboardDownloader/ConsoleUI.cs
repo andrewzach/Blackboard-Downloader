@@ -142,9 +142,9 @@ namespace BlackboardDownloader
             if (choice == -1) { return; }
             else if (choice == 0)
             {
-                if (folder.Folder != null)
+                if (folder.ParentFolder != null)
                 {
-                    ViewDirectory(folder.Folder);
+                    ViewDirectory(folder.ParentFolder);
                 }
                 else
                 {

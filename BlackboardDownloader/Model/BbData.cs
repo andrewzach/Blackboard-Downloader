@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace BlackboardDownloader
 {
+    // Class containing all data found for a user's Blackboard courses.
+    // Contains a list of BbModules, each of which has folders and files. 
     [Serializable]
     public class BbData
     {
@@ -21,10 +23,13 @@ namespace BlackboardDownloader
             get { return modules; }
         }
 
+        // Add a new module
         public void AddModule(BbModule m)
         {
             modules.Add(m);
         }
+
+        // Returns a list of module names. Used in Console UI
         public List<string> GetModuleNames()
         {
             List<string> moduleNames = new List<string>();
@@ -41,6 +46,7 @@ namespace BlackboardDownloader
             modules = new List<BbModule>();
         }
 
+        // Returns BbModule object matching the name string. Used in Console UI
         public BbModule GetModuleByName(string name)
         {
             foreach (BbModule m in modules)

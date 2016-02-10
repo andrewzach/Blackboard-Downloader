@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Blackboard Downloader")]
-[assembly: AssemblyDescription("A downloader for DIT's webcourses.")]
+[assembly: AssemblyDescription("Blackboard Downloader was written to simplify downloading large amounts of files from courses on Blackboard. Normally, downloading an entire course's files requires individually clicking on each file, finding the download link, saving it, and then manually re-organizing them into appropriate folders. This can take quite a while when some courses have over 100 files.\nBlackboard Downloader does all the work for you. After entering your login, Blackboard Downloader will search for all the content available to you on Blackboard and then display it in an easy to navigate list. An entire course's content can be downloaded in the click of a button, and all files are automatically organized into folders. Individual files or folders can also be selected for download.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Dublin Institute of Technology")]
 [assembly: AssemblyProduct("Blackboard Downloader")]

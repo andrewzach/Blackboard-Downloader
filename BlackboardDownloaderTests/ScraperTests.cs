@@ -21,7 +21,7 @@ namespace BlackboardDownloader.Tests
             bool loginSuccess = scraper.Login("D14127051", GetLoginPassword());
 
             Assert.IsTrue(loginSuccess, "Login() returned false");
-            Assert.IsTrue(scraper.initialized, "Scraper not initialized after login");
+            Assert.IsTrue(scraper.Initialized, "Scraper not initialized after login");
         }
 
         [TestMethod]
@@ -44,8 +44,6 @@ namespace BlackboardDownloader.Tests
                 "CIDT265-2012-14: Course Information DT265",
                 "CMPU4065-A: Enterprise Application Development",
                 "CMPU4066-B: Object Oriented Software Development 2",
-                "CMPU4067_R: Programming for Mobile and Smart Devices",
-                "WKPLINT: Work Placement Internship"
             };
 
             //Act
