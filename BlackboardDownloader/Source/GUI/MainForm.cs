@@ -74,7 +74,7 @@ namespace BlackboardDownloader
             // Create a root node for the module
             TreeNode moduleNode = new TreeNode(module.Name);
             moduleNode.Tag = module;
-            Font moduleFont = new Font(new FontFamily("Segoe UI Semibold"), 16, FontStyle.Regular, GraphicsUnit.Pixel);
+            Font moduleFont = new Font(new FontFamily("Segoe UI Semibold"), 15, FontStyle.Regular, GraphicsUnit.Pixel);
             moduleNode.NodeFont = moduleFont;
             moduleNode.BackColor = Color.AliceBlue;
 
@@ -98,6 +98,8 @@ namespace BlackboardDownloader
         {
             TreeNode folderNode = new TreeNode(folder.Name);
             folderNode.Tag = folder;
+            folderNode.ImageIndex = 2;
+            folderNode.SelectedImageIndex = 2;
             foreach(BbContentDirectory subFolder in folder.SubFolders)
             {
                 PopulateTreeFolder(folderNode, subFolder);
@@ -114,6 +116,8 @@ namespace BlackboardDownloader
         {
             TreeNode fileNode = new TreeNode(file.Name);
             fileNode.Tag = file;
+            fileNode.ImageIndex = 4;
+            fileNode.SelectedImageIndex = 4;
             parent.Nodes.Add(fileNode);
         }
 
@@ -175,6 +179,38 @@ namespace BlackboardDownloader
                 infoText3.Text = module.Content.SubFolders.Count.ToString();
                 infoLabel4.Text = "URL";
                 infoTextLink.Text = module.Url.AbsoluteUri;
+            }
+        }
+
+        // Event handler for content tree - Change icon of expanded node to open folder
+        private void contentTree_AfterExpand(object sender, TreeViewEventArgs e)
+        {
+            // Modules use blue folder image
+            if (e.Node.Tag.GetType() == typeof(BbModule))
+            {
+                e.Node.ImageIndex = 1;
+                e.Node.SelectedImageIndex = 1;
+            }
+            else
+            {
+                e.Node.ImageIndex = 3;
+                e.Node.SelectedImageIndex = 3;
+            }
+        }
+
+        // Event handler for content tree - Change icon of closed node back to original closed folder
+        private void contentTree_AfterCollapse(object sender, TreeViewEventArgs e)
+        {
+            // Modules use blue folder image
+            if (e.Node.Tag.GetType() == typeof(BbModule))
+            {
+                e.Node.ImageIndex = 0;
+                e.Node.SelectedImageIndex = 0;
+            }
+            else
+            {
+                e.Node.ImageIndex = 2;
+                e.Node.SelectedImageIndex = 2;
             }
         }
 
@@ -334,7 +370,19 @@ namespace BlackboardDownloader
             scraper.DownloadProgress.EndJob();
         }
 
-////////// ### POPULATE CONTENT ###
+        // Event handler for download button - change image to hover image
+        private void downloadButton_MouseHover(object sender, EventArgs e)
+        {
+            downloadButton.ImageIndex = 1;
+        }
+
+        // Event handler for download button - change image to normal image
+        private void downloadButton_MouseLeave(object sender, EventArgs e)
+        {
+            downloadButton.ImageIndex = 0;
+        }
+
+        ////////// ### POPULATE CONTENT ###
 
         // Searches for content on Blackboard and populates modules/folders/files
         // Happens asynchronously using a BackgroundWorker.
