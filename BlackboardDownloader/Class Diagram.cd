@@ -65,8 +65,10 @@
       <Field Name="aboutMenuItem" Hidden="true" />
       <Field Name="commandsMenuItem" Hidden="true" />
       <Field Name="components" Hidden="true" />
+      <Field Name="contentImageList" Hidden="true" />
       <Method Name="Dispose" Hidden="true" />
       <Field Name="downloadButton" Hidden="true" />
+      <Field Name="downloadButtonImages" Hidden="true" />
       <Field Name="horizontalLineLabel" Hidden="true" />
       <Field Name="infoGroupBox" Hidden="true" />
       <Field Name="infoLabel1" Hidden="true" />
@@ -92,7 +94,7 @@
       <Field Name="yourModulesLabel" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>IIAABBCUAygBARAAekLUECAKwBAB0UgBgAACAgAiRCA=</HashCode>
+      <HashCode>IIAEBBCcgygBARAA+kLUECAKwBAB0UgHgAACAgAiRCA=</HashCode>
       <FileName>Source\GUI\MainForm.cs</FileName>
     </TypeIdentifier>
   </Class>
