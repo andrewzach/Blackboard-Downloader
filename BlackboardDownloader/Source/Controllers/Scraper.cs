@@ -362,6 +362,10 @@ namespace BlackboardDownloader
                 {
                     file.Url = OneDriveURL(file.Url);
                 }
+                if (file.LinkType == "dropbox")
+                {
+                    file.Url = DropboxURL(file.Url);
+                }
                 else if (file.LinkType == "website")
                 {
                     log.Write("Linking to website " + file.Url.AbsoluteUri);
@@ -428,10 +432,17 @@ namespace BlackboardDownloader
             return oneDriveURL;
         }
 
+        // Returns a URL to direct download a OneDrive file
+        public Uri DropboxURL(Uri link)
+        {
+            return new Uri(link.AbsoluteUri.Replace("www.dropbox.com", "dl.dropboxusercontent.com"));
+        }
+
         // Determines filename 
         public void DetectFileName(BbContentItem file)
         {
-            if (file.LinkType == "directlink")  // if direct link to file, get filename from path
+            // if direct link to file or dropbox link, get filename from path
+            if (file.LinkType == "directlink" || file.LinkType == "dropbox")  
             {
                 string filename = Path.GetFileName(file.Url.AbsoluteUri);
                 file.Filename = filename;

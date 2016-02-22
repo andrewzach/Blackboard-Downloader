@@ -327,7 +327,7 @@ namespace BlackboardDownloader
             {
                 BbContentDirectory folder = selectedNode.Tag as BbContentDirectory;
                 scraper.DownloadProgress.TotalWork = folder.CountAllFiles();
-                scraper.DownloadFolder(folder, scraper.OutputDirectory);
+                scraper.DownloadFolder(folder, scraper.OutputDirectory + BbUtils.CleanDirectory(folder.Name) + @"\");
             }
             // Single file selected
             else if (selectedNode.Tag.GetType() == typeof(BbContentItem))

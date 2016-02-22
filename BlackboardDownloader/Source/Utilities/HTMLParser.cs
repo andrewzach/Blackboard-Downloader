@@ -42,7 +42,7 @@ namespace BlackboardDownloader
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(pageSource);
             // XPath finds links in <li> tags with id contentListItem. Excludes links with uploadAssignment? (assignment submission links)
-            HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//li[contains(@id, 'contentListItem')]//a[not(contains(@href,'uploadAssignment?'))]");
+            HtmlNodeCollection contentLinks = doc.DocumentNode.SelectNodes("//li[contains(@id, 'contentListItem')]//a[@href and not(contains(@href,'uploadAssignment?'))]");
             if (contentLinks != null) return contentLinks.ToList();
             else return null;
         }
